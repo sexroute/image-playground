@@ -25,6 +25,7 @@ import java.util.Date;
 
 import com.google.imageplayground.codegen.DexImageScript;
 import com.google.imageplayground.util.ARManager;
+import com.google.imageplayground.util.AndroidUtils;
 import com.google.imageplayground.util.CameraUtils;
 import com.google.imageplayground.util.ShutterButton;
 import com.google.imageplayground.util.ShutterButton.OnShutterButtonListener;
@@ -37,8 +38,10 @@ import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.SurfaceView;
 import android.view.View;
 import android.widget.CheckBox;
@@ -57,6 +60,8 @@ public class ImagePlaygroundActivity extends Activity implements Camera.PreviewC
 	ResultView fullScreenResultView;
 	
 	String userScript;
+	
+	Handler handler = new Handler();
 	
     static DateFormat FILENAME_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
     static String BASE_PICTURE_DIR = Environment.getExternalStorageDirectory() + File.separator + "ImagePlayground";
@@ -81,6 +86,10 @@ public class ImagePlaygroundActivity extends Activity implements Camera.PreviewC
         
         shutterButton = (ShutterButton)findViewById(R.id.shutterButton);
         shutterButton.setOnShutterButtonListener(this);
+        
+        int switchCameraVisibility = CameraUtils.numberOfCameras() > 1 ? View.VISIBLE : View.GONE;
+        findViewById(R.id.switchCameraButton).setVisibility(switchCameraVisibility);
+        findViewById(R.id.fullScreenSwitchCameraButton).setVisibility(switchCameraVisibility);
 
         arManager = ARManager.createAndSetupCameraView(this, cameraView, this);
         arManager.setPreferredPreviewSize(640, 360);
@@ -186,6 +195,13 @@ public class ImagePlaygroundActivity extends Activity implements Camera.PreviewC
     
     public void onClick_goFullScreen(View view) {
     	fullScreenControls.setVisibility(View.VISIBLE);
+    	fullScreenResultView.updateBitmap(resultView.getBitmap());
+    	resultView.updateBitmap(null);
+    	if (!cameraCheckbox.isChecked()) {
+    		cameraCheckbox.setChecked(true);
+    		arManager.startCameraIfVisible();
+    	}
+
     	/*
     	arManager.setPreferredPreviewSize(1280, 720);
     	arManager.stopCamera();
@@ -195,6 +211,8 @@ public class ImagePlaygroundActivity extends Activity implements Camera.PreviewC
     
     public void onClick_exitFullScreen(View view) {
     	fullScreenControls.setVisibility(View.GONE);
+    	resultView.updateBitmap(fullScreenResultView.getBitmap());
+    	fullScreenResultView.updateBitmap(null);
     	/*
     	arManager.setPreferredPreviewSize(640, 480);
     	arManager.stopCamera();
@@ -243,4 +261,27 @@ public class ImagePlaygroundActivity extends Activity implements Camera.PreviewC
 	public void onShutterButtonClick() {
 		takePicture();
 	}
+	
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    	// take picture when pushing hardware camera button or trackball center
+		if ((keyCode==KeyEvent.KEYCODE_CAMERA || keyCode==KeyEvent.KEYCODE_DPAD_CENTER) && event.getRepeatCount()==0) {
+			if (isFullScreen()) {
+				handler.post(new Runnable() {
+					public void run() {
+						takePicture();
+					}
+				});
+				return true;
+			}
+		}
+		if (keyCode==KeyEvent.KEYCODE_BACK) {
+			// exit fullscreen mode, otherwise handle normally
+			if (isFullScreen()) {
+				onClick_exitFullScreen(null);
+				return true;
+			}
+		}
+    	return super.onKeyDown(keyCode, event);
+    }
 }
