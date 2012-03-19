@@ -113,9 +113,9 @@ public class ImagePlaygroundActivity extends Activity implements Camera.PreviewC
     }
     
     void updateFromPreferences() {
-    	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
-    	this.userScript = prefs.getString("script", "return y");
-    	scriptField.setText(this.userScript);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        this.userScript = prefs.getString("script", "return gray(y)");
+        scriptField.setText(this.userScript);
     }
     
     void saveScript(String script) {
