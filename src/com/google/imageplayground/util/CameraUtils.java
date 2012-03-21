@@ -306,7 +306,7 @@ public class CameraUtils {
         
         int y1192 = 1192 * yy;
         int red = (y1192 + 1634 * vv) >> 10;
-        int green = (y1192 - 833 * vv - 400 * uu) >> 10;  
+        int green = (y1192 - 833 * vv - 400 * uu) >> 10;
         int blue = (y1192 + 2066 * uu) >> 10;
 
         if (red<0) red=0; if (red>255) red=255;
@@ -317,5 +317,62 @@ public class CameraUtils {
         rgb[1] = green;
         rgb[2] = blue;
     }
+    
+    /** Returns a single RGB int value from YUV data, suitable for passing to Bitmap.setPixel and similar methods. */
+    public static int colorFromYuv(byte y, byte u, byte v) {
+        int yy = (0xff & y) - 16;
+        if (yy < 0) yy = 0;
+        // u and v need to be translated to +-128
+        int uu = (0xff & u) - 128;
+        int vv = (0xff & v) - 128;
+        
+        int y1192 = 1192 * yy;
+        int red = (y1192 + 1634 * vv) >> 10;
+        int green = (y1192 - 833 * vv - 400 * uu) >> 10;
+        int blue = (y1192 + 2066 * uu) >> 10;
 
+        if (red<0) red=0; if (red>255) red=255;
+        if (green<0) green=0; if (green>255) green=255;
+        if (blue<0) blue=0; if (blue>255) blue=255;
+        
+        return (0xff<<24) | (red<<16) | (green<<8) | blue;
+    }
+    
+    // methods to return individual color components from YUV data
+    public static int redFromYuv(byte y, byte u, byte v) {
+        int yy = (0xff & y) - 16;
+        if (yy < 0) yy = 0;
+
+        int vv = (0xff & v) - 128;
+        int y1192 = 1192 * yy;
+        
+        int red = (y1192 + 1634 * vv) >> 10;
+        if (red<0) red=0; if (red>255) red=255;
+        return red;
+    }
+
+    public static int greenFromYuv(byte y, byte u, byte v) {
+        int yy = (0xff & y) - 16;
+        if (yy < 0) yy = 0;
+
+        int uu = (0xff & u) - 128;
+        int vv = (0xff & v) - 128;
+        int y1192 = 1192 * yy;
+        
+        int green = (y1192 - 833 * vv - 400 * uu) >> 10;
+        if (green<0) green=0; if (green>255) green=255;
+        return green;
+    }
+
+    public static int blueFromYuv(byte y, byte u, byte v) {
+        int yy = (0xff & y) - 16;
+        if (yy < 0) yy = 0;
+
+        int uu = (0xff & u) - 128;       
+        int y1192 = 1192 * yy;
+        
+        int blue = (y1192 + 2066 * uu) >> 10;
+        if (blue<0) blue=0; if (blue>255) blue=255;
+        return blue;
+    }
 }

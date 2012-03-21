@@ -206,7 +206,7 @@ public class DexImageScript {
 		return (val>cmp) ? trueval : falseval;
 	}
 
-	public int script_brightness(int row, int col) {
+	public int script_getbright(int row, int col) {
 		// if out of range, use nearest edge
 		if (row<0) row = 0;
 		if (row>=imageHeight) row = imageHeight-1;
@@ -215,6 +215,54 @@ public class DexImageScript {
 		return 0xff & imageData[row*imageWidth + col];
 	}
 	
+    public int script_getcolor(int row, int col) {
+        // if out of range, use nearest edge
+        if (row<0) row = 0;
+        if (row>=imageHeight) row = imageHeight-1;
+        if (col<0) col = 0;
+        if (col>=imageWidth) col = imageWidth-1;
+        
+        byte y = imageData[row*imageWidth + col];
+        int uvindex = imageWidth*imageHeight + (row/2)*imageWidth + (col & ~1);
+        return CameraUtils.colorFromYuv(y, imageData[uvindex+1], imageData[uvindex]);
+    }
+    
+    public int script_getred(int row, int col) {
+        // if out of range, use nearest edge
+        if (row<0) row = 0;
+        if (row>=imageHeight) row = imageHeight-1;
+        if (col<0) col = 0;
+        if (col>=imageWidth) col = imageWidth-1;
+        
+        byte y = imageData[row*imageWidth + col];
+        int uvindex = imageWidth*imageHeight + (row/2)*imageWidth + (col & ~1);
+        return CameraUtils.redFromYuv(y, imageData[uvindex+1], imageData[uvindex]);
+    }
+    
+    public int script_getgreen(int row, int col) {
+        // if out of range, use nearest edge
+        if (row<0) row = 0;
+        if (row>=imageHeight) row = imageHeight-1;
+        if (col<0) col = 0;
+        if (col>=imageWidth) col = imageWidth-1;
+        
+        byte y = imageData[row*imageWidth + col];
+        int uvindex = imageWidth*imageHeight + (row/2)*imageWidth + (col & ~1);
+        return CameraUtils.greenFromYuv(y, imageData[uvindex+1], imageData[uvindex]);
+    }
+    
+    public int script_getblue(int row, int col) {
+        // if out of range, use nearest edge
+        if (row<0) row = 0;
+        if (row>=imageHeight) row = imageHeight-1;
+        if (col<0) col = 0;
+        if (col>=imageWidth) col = imageWidth-1;
+        
+        byte y = imageData[row*imageWidth + col];
+        int uvindex = imageWidth*imageHeight + (row/2)*(imageHeight/2) + (col & ~1);
+        return CameraUtils.blueFromYuv(y, imageData[uvindex+1], imageData[uvindex]);
+    }
+    
 	public int script_random(int rmax) {
 		return random.nextInt(rmax);
 	}
