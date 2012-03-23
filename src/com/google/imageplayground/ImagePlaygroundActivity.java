@@ -31,6 +31,7 @@ import com.google.imageplayground.util.ShutterButton;
 import com.google.imageplayground.util.ShutterButton.OnShutterButtonListener;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -41,9 +42,11 @@ import android.os.Environment;
 import android.os.Handler;
 import android.preference.PreferenceManager;
 import android.util.Log;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.SurfaceView;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.EditText;
 
@@ -58,6 +61,8 @@ public class ImagePlaygroundActivity extends Activity implements Camera.PreviewC
 	
 	View fullScreenControls;
 	ResultView fullScreenResultView;
+	int displayWidth;
+	int displayHeight;
 	
 	String userScript;
 	
@@ -90,9 +95,14 @@ public class ImagePlaygroundActivity extends Activity implements Camera.PreviewC
         int switchCameraVisibility = CameraUtils.numberOfCameras() > 1 ? View.VISIBLE : View.GONE;
         findViewById(R.id.switchCameraButton).setVisibility(switchCameraVisibility);
         findViewById(R.id.fullScreenSwitchCameraButton).setVisibility(switchCameraVisibility);
+        
+        WindowManager wm = (WindowManager)getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        displayWidth = display.getWidth();
+        displayHeight = display.getHeight();
 
         arManager = ARManager.createAndSetupCameraView(this, cameraView, this);
-        arManager.setPreferredPreviewSize(640, 360);
+        arManager.setPreferredPreviewSize(displayWidth/2, displayHeight/2);
         arManager.setNumberOfPreviewCallbackBuffers(1);
         
         updateFromPreferences();
@@ -202,22 +212,19 @@ public class ImagePlaygroundActivity extends Activity implements Camera.PreviewC
     		arManager.startCameraIfVisible();
     	}
 
-    	/*
-    	arManager.setPreferredPreviewSize(1280, 720);
+    	arManager.setPreferredPreviewSize(displayWidth, displayHeight);
     	arManager.stopCamera();
     	arManager.startCamera();
-    	*/
     }
     
     public void onClick_exitFullScreen(View view) {
     	fullScreenControls.setVisibility(View.GONE);
     	resultView.updateBitmap(fullScreenResultView.getBitmap());
     	fullScreenResultView.updateBitmap(null);
-    	/*
-    	arManager.setPreferredPreviewSize(640, 480);
+    	
+    	arManager.setPreferredPreviewSize(displayWidth/2, displayHeight/2);
     	arManager.stopCamera();
     	arManager.startCamera();
-    	*/
     }
 
     boolean isFullScreen() {
