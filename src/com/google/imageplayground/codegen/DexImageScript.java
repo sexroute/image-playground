@@ -18,11 +18,17 @@ package com.google.imageplayground.codegen;
 
 import java.io.File;
 import java.lang.reflect.Modifier;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.Callable;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -131,6 +137,9 @@ public class DexImageScript {
 	int imageWidth;
 	int imageHeight;
 	
+	List<Worker> workers;
+	ExecutorService workerExecutor;
+	
 	void createBuffers(int width, int height) {
 		if (pixelBuffer==null || pixelBuffer.length!=width*height) {
 			pixelBuffer = new int[width*height];
@@ -148,35 +157,75 @@ public class DexImageScript {
 		this.imageWidth = width;
 		this.imageHeight = height;
 		
-		if (this.usesColorInput()) {
-			int[] rgb = new int[3];
-			int yindex = 0;
-			int uvstart = width * height;
-			for(int row=0; row<height; row++) {
-				// VU pixels only for every other row and column
-				int uvbase = uvstart + (row/2) * width;
-				for(int col=0; col<width; col++) {
-					// one VU pair of values for every two pixels, round to 2 and take it and the next byte
-					int uvindex = uvbase + (col & ~1);
-					CameraUtils.yuvToRgb(imageData[yindex], imageData[uvindex+1], imageData[uvindex], rgb);
-					pixelBuffer[yindex] = getOutputColorForColorInput(0xff & imageData[yindex], rgb[0], rgb[1], rgb[2], row, col, width, height);
-					yindex++;
-				}
-			}
+		// create workers if needed and run them
+		if (workers==null) {
+		    workers = new ArrayList<Worker>();
+		    int numThreads = Runtime.getRuntime().availableProcessors();
+		    for(int i=0; i<numThreads; i++) {
+		        workers.add(new Worker());
+		    }
+		    workerExecutor = Executors.newFixedThreadPool(workers.size());
 		}
-		else {
-			int index = 0;
-			for(int row=0; row<height; row++) {
-				for(int col=0; col<width; col++) {
-					pixelBuffer[index] = getOutputColorForGrayscaleInput(0xff & imageData[index], row, col, width, height);
-					index++;
-				}
-			}
+		int nworkers = workers.size();
+		for(int i=0; i<workers.size(); i++) {
+		    workers.get(i).setRowRange(i*height/nworkers, (i+1)*height/nworkers);
 		}
+		try {
+	        workerExecutor.invokeAll((Collection)workers);
+		}
+		catch(InterruptedException ignored) {}
 
 		this.imageData = null;
 		outputBitmap.setPixels(pixelBuffer, 0, imageWidth, 0, 0, imageWidth, imageHeight);
 		return outputBitmap;
+	}
+	
+	// worker objects which run in separate threads each computing a subset of the output rows
+    class Worker implements Callable<Long> {
+        int rowStart;
+        int rowEnd;
+        
+        public void setRowRange(int start, int end) {
+            rowStart = start;
+            rowEnd = end;
+        }
+        
+        public Long call() {
+            // interface wants us to return something, might as well collect timing data
+            long t1 = System.nanoTime();
+            computePixels(rowStart, rowEnd);
+            return System.nanoTime() - t1;
+        }
+    }
+	    
+	void computePixels(int rowStart, int rowEnd) {
+        if (this.usesColorInput()) {
+            int[] rgb = new int[3];
+            int yindex = rowStart * imageWidth;
+            int uvstart = imageWidth * imageHeight;
+            for(int row=rowStart; row<rowEnd; row++) {
+                // VU pixels only for every other row and column
+                int uvbase = uvstart + (row/2) * imageWidth;
+                for(int col=0; col<imageWidth; col++) {
+                    // one VU pair of values for every two pixels, round to 2 and take it and the next byte
+                    int uvindex = uvbase + (col & ~1);
+                    CameraUtils.yuvToRgb(imageData[yindex], imageData[uvindex+1], imageData[uvindex], rgb);
+                    pixelBuffer[yindex] = getOutputColorForColorInput(0xff & imageData[yindex], 
+                            rgb[0], rgb[1], rgb[2], row, col, imageWidth, imageHeight);
+                    yindex++;
+                }
+            }
+        }
+        else {
+            int index = rowStart * imageWidth;
+            for(int row=rowStart; row<rowEnd; row++) {
+                for(int col=0; col<imageWidth; col++) {
+                    pixelBuffer[index] = getOutputColorForGrayscaleInput(0xff & imageData[index], row, col, 
+                            imageWidth, imageHeight);
+                    index++;
+                }
+            }
+        }
 	}
 	
 	// Methods beginning with script_ can be called from scripts. All arguments and return values must be int.
