@@ -303,6 +303,9 @@ public class DexCodeGenerator {
     	else if ("=".equals(token)) {
     		// TODO: verify that target can be assigned to
     		String target = tree.getChild(0).getText();
+            // We need to add the target to the set of locals, in case it's not referenced in an expression.
+            // (In which case this instruction is likely useless).
+            context.locals.add(target);
     		// passing target to the recursive call will cause its result to be assigned to target
     		generateInstructionsForSubtree(tree.getChild(1), context, target);
     		return target;

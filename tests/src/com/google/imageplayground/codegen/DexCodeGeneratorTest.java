@@ -91,6 +91,12 @@ public class DexCodeGeneratorTest extends TestCase {
 			new DexCodeGenerator.ConstantIntAssignment("!1", 3),
 			new DexCodeGenerator.BinaryIntOperation("!2", BinaryOp.ADD, "a", "!1"),
 			new DexCodeGenerator.BinaryIntOperation("z", BinaryOp.MULTIPLY, "!2", "b"));
+	}	
+	
+	public void testReturnFunctionExpression() throws Exception {
+	    verifyScriptInstructions("return gray(y)",
+	        new DexCodeGenerator.FunctionCallInstruction("!1", "gray", new String[] {"y"}),
+	        new DexCodeGenerator.ReturnInstruction("!1"));
 	}
 
 }
