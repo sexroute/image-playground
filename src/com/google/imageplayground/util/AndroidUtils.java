@@ -144,7 +144,14 @@ public class AndroidUtils {
      * and returns true. On earlier API versions, does nothing and returns false.
      */
     public static boolean setSystemUiLowProfile(View view) {
-    	return setSystemUiVisibility(view, "SYSTEM_UI_FLAG_LOW_PROFILE");
+        return setSystemUiVisibility(view, "SYSTEM_UI_FLAG_LOW_PROFILE");
+    }
+    
+    /** On API level 14 (ICS) or higher, calls view.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE)
+     * and returns true. On earlier API versions, does nothing and returns false.
+     */
+    public static boolean setSystemUiVisible(View view) {
+        return setSystemUiVisibility(view, "SYSTEM_UI_FLAG_VISIBLE");
     }
     
     static boolean setSystemUiVisibility(View view, String flagName) {

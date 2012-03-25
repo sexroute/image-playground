@@ -204,27 +204,29 @@ public class ImagePlaygroundActivity extends Activity implements Camera.PreviewC
 
     
     public void onClick_goFullScreen(View view) {
-    	fullScreenControls.setVisibility(View.VISIBLE);
-    	fullScreenResultView.updateBitmap(resultView.getBitmap());
-    	resultView.updateBitmap(null);
-    	if (!cameraCheckbox.isChecked()) {
-    		cameraCheckbox.setChecked(true);
-    		arManager.startCameraIfVisible();
-    	}
+        fullScreenControls.setVisibility(View.VISIBLE);
+        fullScreenResultView.updateBitmap(resultView.getBitmap());
+        resultView.updateBitmap(null);
+        if (!cameraCheckbox.isChecked()) {
+            cameraCheckbox.setChecked(true);
+            arManager.startCameraIfVisible();
+        }
+        AndroidUtils.setSystemUiLowProfile(cameraView);
 
-    	arManager.setPreferredPreviewSize(displayWidth, displayHeight);
-    	arManager.stopCamera();
-    	arManager.startCamera();
+        arManager.setPreferredPreviewSize(displayWidth, displayHeight);
+        arManager.stopCamera();
+        arManager.startCamera();
     }
     
     public void onClick_exitFullScreen(View view) {
-    	fullScreenControls.setVisibility(View.GONE);
-    	resultView.updateBitmap(fullScreenResultView.getBitmap());
-    	fullScreenResultView.updateBitmap(null);
-    	
-    	arManager.setPreferredPreviewSize(displayWidth/2, displayHeight/2);
-    	arManager.stopCamera();
-    	arManager.startCamera();
+        fullScreenControls.setVisibility(View.GONE);
+        resultView.updateBitmap(fullScreenResultView.getBitmap());
+        fullScreenResultView.updateBitmap(null);
+        AndroidUtils.setSystemUiVisible(cameraView);
+
+        arManager.setPreferredPreviewSize(displayWidth/2, displayHeight/2);
+        arManager.stopCamera();
+        arManager.startCamera();
     }
 
     boolean isFullScreen() {
