@@ -262,7 +262,8 @@ public class DexCodeGenerator {
     static void generateInstructions(Tree root, InstructionContext context) {
     	if (root.getText()!=null) {
     		// this is a single instruction instead of a list of instructions
-    		generateInstructionsForSubtree(root, context);
+            generateInstructionsForSubtree(root, context);
+            context.resetSyntheticLocals();
     	}
     	else {
         	int size = root.getChildCount();
@@ -328,6 +329,12 @@ public class DexCodeGenerator {
     		context.instructions.add(inst);
     		return ""; // shouldn't be used because this should be a top-level statement
     	}
+        else if ("BLOCK".equals(token)) {
+            for (int ii=0; ii<tree.getChildCount(); ii++) {
+                generateInstructions(tree.getChild(ii), context);
+            }
+            return "";
+        }
     	System.err.println("Unknown token: " + token);
     	return "";
     }

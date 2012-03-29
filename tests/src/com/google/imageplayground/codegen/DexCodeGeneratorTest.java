@@ -43,11 +43,15 @@ public class DexCodeGeneratorTest extends TestCase {
 		return new CommonTree(token);
 	}
 	
-	private static Tree createTreeWithChildren(String parentContent, String...childContent) {
+	private static Tree createTreeWithChildren(String parentContent, Object...childContent) {
 		Tree parent = createTree(parentContent);
-		for(String s : childContent) {
-			Tree child = createTree(s);
-			parent.addChild(child);
+		for(Object child : childContent) {
+		    if (child instanceof String) {
+		        parent.addChild(createTree((String)child));
+		    }
+		    else {
+		        parent.addChild((Tree)child);
+		    }
 		}
 		return parent;
 	}
@@ -56,6 +60,14 @@ public class DexCodeGeneratorTest extends TestCase {
 		String exp = "x = 1";
 		Tree expectedTree = createTreeWithChildren("=", "x", "1");
 		verifyTreesEqual(DexCodeGenerator.createParseTree(exp), expectedTree);
+	}
+	
+	public void testParse_if() throws Exception {
+	    String exp = "if x>1 y = 2";
+        Tree expectedTree = createTreeWithChildren("if", 
+                createTreeWithChildren(">", "x", "1"),
+                createTreeWithChildren("=", "y", "2"));
+	    verifyTreesEqual(expectedTree, DexCodeGenerator.createParseTree(exp));
 	}
 	
 	private void verifyScriptInstructions(String script, DexCodeGenerator.Instruction... expectedInstructions) throws Exception {

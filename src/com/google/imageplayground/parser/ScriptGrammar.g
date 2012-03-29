@@ -5,11 +5,13 @@ grammar ScriptGrammar;
 options {
     output=AST;
     ASTLabelType=CommonTree; // type of $stat.tree ref etc...
+    backtrack = false;
 }
 
 tokens {
     CALL;
     NEG;
+    BLOCK;
 }
 
 @header  {
@@ -19,12 +21,17 @@ package com.google.imageplayground.parser;
 package com.google.imageplayground.parser;
 }
 
-prog:   (stat)+ ;
+prog:   (block)+ ;
+
+block: '{' NEWLINE block* '}' -> ^(BLOCK block*)
+    |  stat
+    ;
 
 stat:   expr NEWLINE        -> expr
     |   TYPE assign -> ^(TYPE assign)
     |   assign
     |   retexp
+    |   ifexp
     |   NEWLINE             ->
     ;
     
@@ -54,6 +61,15 @@ atom:   INT
     ;
 
 funcall: ID '(' expr (',' expr)* ')'-> ^(CALL ID expr*)
+    ;
+
+ifexp:  'if' boolexp block -> ^('if' boolexp block)
+    ;
+    
+boolexp:  boolterm ('=='^|'!='^|'>'^|'>='^|'<'^|'<=') boolterm
+    ;
+
+boolterm: (ID|INT)
     ;
 
 TYPE: ('int'|'long'|'float'|'double'|'boolean') ;
