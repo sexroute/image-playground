@@ -233,6 +233,10 @@ public class ImagePlaygroundActivity extends Activity implements Camera.PreviewC
     	return fullScreenControls.getVisibility()==View.VISIBLE;
     }
     
+    boolean isTextEditorExpanded() {
+        return scriptField.getWidth() > displayWidth*3/4;
+    }
+    
     DexImageScript dexScript = null;
     String lastUserScript = "";
 
@@ -240,17 +244,19 @@ public class ImagePlaygroundActivity extends Activity implements Camera.PreviewC
 	public void onPreviewFrame(byte[] data, Camera camera) {
 		Camera.Size size = camera.getParameters().getPreviewSize();
 		try {
-			String userScript = scriptField.getText().toString();
-			if (userScript!=null && (!userScript.equals(lastUserScript))) {
-				lastUserScript = userScript;
-				saveScript(userScript);
-				dexScript = DexImageScript.createScript(this, userScript);
-			}
-			Bitmap bitmap = null;
-			if (dexScript != null) {
-				bitmap = dexScript.getBitmapForImageData(data, size.width, size.height);
-			}
-			(isFullScreen() ? fullScreenResultView : resultView).updateBitmap(bitmap);
+		    if (!isTextEditorExpanded()) {
+	            String userScript = scriptField.getText().toString();
+	            if (userScript!=null && (!userScript.equals(lastUserScript))) {
+	                lastUserScript = userScript;
+	                saveScript(userScript);
+	                dexScript = DexImageScript.createScript(this, userScript);
+	            }
+	            Bitmap bitmap = null;
+	            if (dexScript != null) {
+	                bitmap = dexScript.getBitmapForImageData(data, size.width, size.height);
+	            }
+	            (isFullScreen() ? fullScreenResultView : resultView).updateBitmap(bitmap);
+		    }
 		}
 		catch(Exception ex) {
 			Log.e("ImageLab", "Error processing image", ex);

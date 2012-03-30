@@ -31,6 +31,8 @@ import org.antlr.runtime.tree.Tree;
 
 import com.google.dexmaker.BinaryOp;
 import com.google.dexmaker.Code;
+import com.google.dexmaker.Comparison;
+import com.google.dexmaker.Label;
 import com.google.dexmaker.Local;
 import com.google.dexmaker.MethodId;
 import com.google.dexmaker.TypeId;
@@ -42,6 +44,8 @@ public class DexCodeGenerator {
 	
 	static Map<String, BinaryOp> BINARY_OPS = new HashMap<String, BinaryOp>();
 	static Map<String, UnaryOp> UNARY_OPS = new HashMap<String, UnaryOp>();
+	static Map<String, Comparison> COMPARISONS = new HashMap<String, Comparison>();
+	static Map<Comparison, Comparison> COMPARISON_OPPOSITES = new HashMap<Comparison, Comparison>();
 
     static {
     	BINARY_OPS.put("+", BinaryOp.ADD);
@@ -58,11 +62,25 @@ public class DexCodeGenerator {
     	
     	UNARY_OPS.put("NEG", UnaryOp.NEGATE);
     	UNARY_OPS.put("~", UnaryOp.NOT);
+    	
+        COMPARISONS.put("==", Comparison.EQ);
+        COMPARISONS.put("!=", Comparison.NE);
+        COMPARISONS.put("<", Comparison.LT);
+        COMPARISONS.put("<=", Comparison.LE);
+        COMPARISONS.put(">", Comparison.GT);
+        COMPARISONS.put(">=", Comparison.GE);
+        
+        COMPARISON_OPPOSITES.put(Comparison.EQ, Comparison.NE);
+        COMPARISON_OPPOSITES.put(Comparison.NE, Comparison.EQ);
+        COMPARISON_OPPOSITES.put(Comparison.LT, Comparison.GE);
+        COMPARISON_OPPOSITES.put(Comparison.GE, Comparison.LT);
+        COMPARISON_OPPOSITES.put(Comparison.GT, Comparison.LE);
+        COMPARISON_OPPOSITES.put(Comparison.LE, Comparison.GT);        
     }
     
     static class InstructionContext {
     	public Set<String> locals = new HashSet<String>();
-    	public Set<String> labels = new HashSet<String>();
+    	public Map<String, Label> labels = new HashMap<String, Label>();
     	public List<Instruction> instructions = new ArrayList<Instruction>();
     	
     	int syntheticLocalCounter = 0;
@@ -74,6 +92,14 @@ public class DexCodeGenerator {
     	}
     	public void resetSyntheticLocals() {
     		syntheticLocalCounter = 0;
+    	}
+    	
+    	int labelCounter = 0;
+    	public String nextLabel() {
+    	    labelCounter++;
+    	    String name = "L"+labelCounter;
+    	    labels.put(name, new Label());
+    	    return name;
     	}
     }
     
@@ -108,12 +134,12 @@ public class DexCodeGenerator {
     	}
     	// write code now that we have all the locals available
     	for(Instruction inst : context.instructions) {
-    		inst.generateCode(code, allLocals, thisType);
+    		inst.generateCode(code, allLocals, context.labels, thisType);
     	}
     }
 	
     static abstract class Instruction {
-    	abstract void generateCode(Code code, Map<String, Local> localMap, TypeId thisType);
+    	abstract void generateCode(Code code, Map<String, Local> localMap, Map<String, Label> labelMap, TypeId thisType);
     	
     	public boolean equals(Object other) {
     		return (other!=null && this.getClass()==other.getClass() && this.toString().equals(other.toString()));
@@ -132,7 +158,7 @@ public class DexCodeGenerator {
 			this.value = value;
 		}
 
-    	public void generateCode(Code code, Map<String, Local> localMap, TypeId thisType) {
+    	public void generateCode(Code code, Map<String, Local> localMap, Map<String, Label> labelMap, TypeId thisType) {
     		code.loadConstant(localMap.get(targetLocal), value);
     	}
     	public String toString() {
@@ -148,7 +174,7 @@ public class DexCodeGenerator {
 			this.sourceLocal = sourceLocal;
 		}
     	
-		public void generateCode(Code code, Map<String, Local> localMap, TypeId thisType) {
+		public void generateCode(Code code, Map<String, Local> localMap, Map<String, Label> labelMap, TypeId thisType) {
     		code.move(localMap.get(targetLocal), localMap.get(sourceLocal));
     	}
     	public String toString() {
@@ -168,7 +194,7 @@ public class DexCodeGenerator {
 			this.targetLocal = targetLocal;
 		}
     	
-		public void generateCode(Code code, Map<String, Local> localMap, TypeId thisType) {
+		public void generateCode(Code code, Map<String, Local> localMap, Map<String, Label> labelMap, TypeId thisType) {
     		code.op(operator, localMap.get(targetLocal), localMap.get(leftLocal), localMap.get(rightLocal));
     	}
     	public String toString() {
@@ -186,7 +212,7 @@ public class DexCodeGenerator {
 			this.targetLocal = targetLocal;
 		}
     	
-		public void generateCode(Code code, Map<String, Local> localMap, TypeId thisType) {
+		public void generateCode(Code code, Map<String, Local> localMap, Map<String, Label> labelMap, TypeId thisType) {
     		code.op(operator, localMap.get(targetLocal), localMap.get(sourceLocal));
     	}
     	public String toString() {
@@ -204,7 +230,7 @@ public class DexCodeGenerator {
 			this.targetLocal = targetLocal;
 		}
 
-		public void generateCode(Code code, Map<String, Local> localMap, TypeId thisType) {
+		public void generateCode(Code code, Map<String, Local> localMap, Map<String, Label> labelMap, TypeId thisType) {
     		// call the superclass (DexImageScript) method with the script_ prefix
     		TypeId superclass = TypeId.get(DexImageScript.class);
     		String methodName = "script_" + functionName;
@@ -251,12 +277,48 @@ public class DexCodeGenerator {
 			this.targetLocal = targetLocal;
 		}
     	
-		public void generateCode(Code code, Map<String, Local> localMap, TypeId thisType) {
+		public void generateCode(Code code, Map<String, Local> localMap, Map<String, Label> labelMap, TypeId thisType) {
     		code.returnValue(localMap.get(targetLocal));
     	}
     	public String toString() {
     		return String.format("RETURN [%s]", targetLocal);
     	}
+    }
+    
+    static class CompareInstruction extends Instruction {
+        public final String leftLocal;
+        public final String rightLocal;
+        public final Comparison compareOp;
+        public final String trueLabel;
+        public CompareInstruction(String leftLocal, Comparison compareOp, String rightLocal, String trueLabel) {
+            this.leftLocal = leftLocal;
+            this.rightLocal = rightLocal;
+            this.compareOp = compareOp;
+            this.trueLabel = trueLabel;
+        }
+        
+        public void generateCode(Code code, Map<String, Local> localMap, Map<String, Label> labelMap, TypeId thisType) {
+            code.compare(compareOp, labelMap.get(trueLabel), localMap.get(leftLocal), localMap.get(rightLocal));
+        }
+        
+        public String toString() {
+            return String.format("IF [%s] %s [%s] JUMP %s", leftLocal, compareOp, rightLocal, trueLabel);
+        }
+    }
+    
+    static class LabelInstruction extends Instruction {
+        public final String labelName;
+        public LabelInstruction(String labelName) {
+            this.labelName = labelName;
+        }
+        
+        public void generateCode(Code code, Map<String, Local> localMap, Map<String, Label> labelMap, TypeId thisType) {
+            code.mark(labelMap.get(labelName));
+        }
+        
+        public String toString() {
+            return String.format("LABEL %s", labelName);
+        }        
     }
     
     static void generateInstructions(Tree root, InstructionContext context) {
@@ -335,8 +397,25 @@ public class DexCodeGenerator {
             }
             return "";
         }
+        else if ("if".equals(token)) {
+            String labelName = context.nextLabel();
+            generateInstructionsForBooleanExpression(tree.getChild(0), labelName, context);
+            generateInstructions(tree.getChild(1), context);
+            context.instructions.add(new LabelInstruction(labelName));
+        }
     	System.err.println("Unknown token: " + token);
     	return "";
+    }
+    
+    static void generateInstructionsForBooleanExpression(Tree tree, String labelName, InstructionContext context) {
+        // for now, limited to atom [comp] atom
+        String leftLocal = resolveLocal(tree.getChild(0).getText(), context, null);
+        String rightLocal = resolveLocal(tree.getChild(1).getText(), context, null);
+        // Because Code.compare branches on true, we want to invert the comparison so that
+        // we continue execution if the condition is true and jump if the condition is false.
+        String token = tree.getText();
+        Comparison compareOp = COMPARISON_OPPOSITES.get(COMPARISONS.get(token));
+        context.instructions.add(new CompareInstruction(leftLocal, compareOp, rightLocal, labelName));
     }
     
     static String resolveLocal(String text, InstructionContext context, String targetName) {
