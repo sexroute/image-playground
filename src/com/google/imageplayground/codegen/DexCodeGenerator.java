@@ -321,6 +321,21 @@ public class DexCodeGenerator {
         }        
     }
     
+    static class JumpInstruction extends Instruction {
+        public final String labelName;
+        public JumpInstruction(String labelName) {
+            this.labelName = labelName;
+        }
+        
+        public void generateCode(Code code, Map<String, Local> localMap, Map<String, Label> labelMap, TypeId thisType) {
+            code.jump(labelMap.get(labelName));
+        }
+        
+        public String toString() {
+            return String.format("JUMP %s", labelName);
+        }        
+    }
+    
     static void generateInstructions(Tree root, InstructionContext context) {
     	if (root.getText()!=null) {
     		// this is a single instruction instead of a list of instructions
@@ -402,6 +417,47 @@ public class DexCodeGenerator {
             generateInstructionsForBooleanExpression(tree.getChild(0), labelName, context);
             generateInstructions(tree.getChild(1), context);
             context.instructions.add(new LabelInstruction(labelName));
+        }
+        else if ("if".equals(token)) {
+            // jump to label past block if condition is false
+            String labelName = context.nextLabel();
+            generateInstructionsForBooleanExpression(tree.getChild(0), labelName, context);
+            generateInstructions(tree.getChild(1), context);
+            context.instructions.add(new LabelInstruction(labelName));
+        }
+        else if ("while".equals(token)) {
+            // put label before test, if condition is false jump to exit, at end of loop jump to top
+            String topLabelName = context.nextLabel();
+            String exitLabelName = context.nextLabel();
+            context.instructions.add(new LabelInstruction(topLabelName));
+            generateInstructionsForBooleanExpression(tree.getChild(0), exitLabelName, context);
+            // loop body, then jump back to top
+            generateInstructions(tree.getChild(1), context);
+            context.instructions.add(new JumpInstruction(topLabelName));
+            // exit label
+            context.instructions.add(new LabelInstruction(exitLabelName));
+        }
+        else if ("for".equals(token)) {
+            // "for i,10 [block]" is equivalent to "i=0; while i<10 {[block]; i=i+1}"
+            String loopIndexLocal = tree.getChild(0).getText();
+            String tmpLocal = context.nextSyntheticLocal();
+            String topLabelName = context.nextLabel();
+            String exitLabelName = context.nextLabel();
+            // set loop index to 0
+            context.instructions.add(new ConstantIntAssignment(loopIndexLocal, 0));
+            // top label
+            context.instructions.add(new LabelInstruction(topLabelName));
+            // jump to end if loop limit reached
+            resolveLocal(tree.getChild(1).getText(), context, tmpLocal);
+            context.instructions.add(new CompareInstruction(loopIndexLocal, Comparison.GE, tmpLocal, exitLabelName));
+            // loop body
+            generateInstructions(tree.getChild(2), context);
+            // increment loop index, then jump back to top
+            context.instructions.add(new ConstantIntAssignment(tmpLocal, 1));
+            context.instructions.add(new BinaryIntOperation(loopIndexLocal, BinaryOp.ADD, loopIndexLocal, tmpLocal));
+            context.instructions.add(new JumpInstruction(topLabelName));
+            // exit label
+            context.instructions.add(new LabelInstruction(exitLabelName));
         }
     	System.err.println("Unknown token: " + token);
     	return "";

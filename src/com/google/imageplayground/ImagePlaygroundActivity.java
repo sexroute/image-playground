@@ -118,7 +118,14 @@ public class ImagePlaygroundActivity extends Activity implements Camera.PreviewC
     public void onResume() {
     	super.onResume();
     	if (cameraCheckbox.isChecked()) {
-    		arManager.startCameraIfVisible();
+    	    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+            if (prefs.getBoolean(SCRIPT_UNTESTED_PREF, false)) {
+                // the script may have hung last time, so don't automatically start it running
+                cameraCheckbox.setChecked(false);
+            }
+            else {
+                arManager.startCameraIfVisible();
+            }
     	}
     }
     
@@ -132,6 +139,12 @@ public class ImagePlaygroundActivity extends Activity implements Camera.PreviewC
     	SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
     	editor.putString("script", script);
     	editor.commit();
+    }
+    
+    void updateScriptUntestedPref(boolean value) {
+        SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
+        editor.putBoolean(SCRIPT_UNTESTED_PREF, value);
+        editor.commit();
     }
     
     public void onClick_updateScript(View view) {
@@ -234,11 +247,21 @@ public class ImagePlaygroundActivity extends Activity implements Camera.PreviewC
     }
     
     boolean isTextEditorExpanded() {
+        // this doesn't work, how to tell if text editor is fullscreen?
         return scriptField.getWidth() > displayWidth*3/4;
     }
     
     DexImageScript dexScript = null;
     String lastUserScript = "";
+    // To protect against infinite loops, set a flag when the script changes, and unset it only if the script
+    // successfully produces several frames in a certain time limit. On startup, if the flag is set, the script
+    // will not start running automatically. This won't prevent infinite loops from hanging, but it will allow
+    // the user to force quit and relaunch without immediately it hanging again.
+    long newScriptStartTime;
+    int newScriptFrames;
+    static final int REQUIRED_NEW_SCRIPT_FRAMES = 10;
+    static final long NEW_SCRIPT_DEADLINE = 5000;
+    static final String SCRIPT_UNTESTED_PREF = "scriptUntested";
 
 	@Override
 	public void onPreviewFrame(byte[] data, Camera camera) {
@@ -247,6 +270,11 @@ public class ImagePlaygroundActivity extends Activity implements Camera.PreviewC
 		    if (!isTextEditorExpanded()) {
 	            String userScript = scriptField.getText().toString();
 	            if (userScript!=null && (!userScript.equals(lastUserScript))) {
+	                // new script: mark untested and record current time
+	                updateScriptUntestedPref(true);
+	                newScriptStartTime = System.currentTimeMillis();
+	                newScriptFrames = 0;
+	                
 	                lastUserScript = userScript;
 	                saveScript(userScript);
 	                dexScript = DexImageScript.createScript(this, userScript);
@@ -254,6 +282,14 @@ public class ImagePlaygroundActivity extends Activity implements Camera.PreviewC
 	            Bitmap bitmap = null;
 	            if (dexScript != null) {
 	                bitmap = dexScript.getBitmapForImageData(data, size.width, size.height);
+	                if (bitmap!=null) {
+	                    // clear untested flag if script has successfully generated enough bitmaps
+	                    ++newScriptFrames;
+	                    if (newScriptFrames==REQUIRED_NEW_SCRIPT_FRAMES && 
+	                            System.currentTimeMillis()-newScriptStartTime<=NEW_SCRIPT_DEADLINE) {
+	                        updateScriptUntestedPref(false);
+	                    }
+	                }
 	            }
 	            (isFullScreen() ? fullScreenResultView : resultView).updateBitmap(bitmap);
 		    }

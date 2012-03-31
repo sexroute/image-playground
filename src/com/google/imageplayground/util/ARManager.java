@@ -35,6 +35,7 @@ public class ARManager implements SurfaceHolder.Callback {
     
     Camera camera;
     boolean cameraViewReady = false;
+    boolean cameraEnabled = false;
     int cameraId = 0;
 
     int preferredPreviewWidth = 0, preferredPreviewHeight = 0;
@@ -100,6 +101,7 @@ public class ARManager implements SurfaceHolder.Callback {
 
     
     public void startCameraIfVisible() {
+        cameraEnabled = true;
         if (cameraViewReady) {
             startCamera();
         }
@@ -112,6 +114,7 @@ public class ARManager implements SurfaceHolder.Callback {
             camera.release();
             camera = null;
         }
+        cameraEnabled = false;
     }
     
     public void switchToCamera(int _cameraId) {
@@ -130,7 +133,7 @@ public class ARManager implements SurfaceHolder.Callback {
     @Override 
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
         this.cameraViewReady = true;
-        startCameraIfVisible();
+        if (cameraEnabled) startCameraIfVisible();
     }
 
     @Override

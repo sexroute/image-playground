@@ -32,6 +32,8 @@ stat:   expr NEWLINE        -> expr
     |   assign
     |   retexp
     |   ifexp
+    |   whileexp
+    |   forexp
     |   NEWLINE             ->
     ;
     
@@ -66,10 +68,19 @@ funcall: ID '(' expr (',' expr)* ')'-> ^(CALL ID expr*)
 ifexp:  'if' boolexp block -> ^('if' boolexp block)
     ;
     
+whileexp:  'while' boolexp block -> ^('while' boolexp block)
+    ;
+    
 boolexp:  boolterm ('=='^|'!='^|'>'^|'>='^|'<'^|'<=') boolterm
     ;
 
 boolterm: (ID|INT)
+    ;
+    
+forexp: 'for' ID ',' forterm block -> ^('for' ID forterm block)
+    ;
+    
+forterm: (ID|INT)
     ;
 
 TYPE: ('int'|'long'|'float'|'double'|'boolean') ;
