@@ -62,13 +62,13 @@ atom:   INT
     |   funcall
     ;
 
-funcall: ID '(' expr (',' expr)* ')'-> ^(CALL ID expr*)
+funcall: ID '(' expr (',' expr)* ')' -> ^(CALL ID expr*)
     ;
 
-ifexp:  'if' boolexp block -> ^('if' boolexp block)
+ifexp:  'if' '('? boolexp ')'? block -> ^('if' boolexp block)
     ;
     
-whileexp:  'while' boolexp block -> ^('while' boolexp block)
+whileexp:  'while' '('? boolexp ')'? block -> ^('while' boolexp block)
     ;
     
 boolexp:  boolterm ('=='^|'!='^|'>'^|'>='^|'<'^|'<=') boolterm
@@ -77,7 +77,7 @@ boolexp:  boolterm ('=='^|'!='^|'>'^|'>='^|'<'^|'<=') boolterm
 boolterm: (ID|INT)
     ;
     
-forexp: 'for' ID ',' forterm block -> ^('for' ID forterm block)
+forexp: 'for' '('? ID ',' forterm ')'? block -> ^('for' ID forterm block)
     ;
     
 forterm: (ID|INT)

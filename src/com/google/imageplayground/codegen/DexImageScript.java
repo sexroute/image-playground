@@ -42,26 +42,44 @@ import com.google.dexmaker.TypeId;
 import com.google.imageplayground.util.CameraUtils;
 
 public class DexImageScript {
-	
-	private static final List<String> GRAYSCALE_ARGUMENTS = Arrays.asList("y", "row", "col", "width", "height");
-	private static final List<String> COLOR_ARGUMENTS = Arrays.asList("y", "r", "g", "b", "row", "col", "width", "height");
-	
-	boolean usesColorInput;
+    
+    static enum ScriptType {
+        GRAYSCALE(TypeId.INT, "getOutputColorForGrayscaleInput", Arrays.asList("y", "row", "col", "width", "height")),
+        COLOR(TypeId.INT, "getOutputColorForColorInput", Arrays.asList("y", "r", "g", "b", "row", "col", "width", "height")),
+        MANUAL(TypeId.VOID, "createOutputBitmap", Arrays.asList("width", "height"));
+        
+        public final TypeId returnType;
+        public final String methodName;
+        public final List<String> arguments;
+        
+        private ScriptType(TypeId returnType, String methodName, List<String> arguments) {
+            this.returnType = returnType;
+            this.methodName = methodName;
+            this.arguments = arguments;
+        }
+    }
+
+    ScriptType scriptType;
 	Random random = new Random();
 	
-	public void setUsesColorInput(boolean value) {
-		usesColorInput = value;
+	ScriptType getScriptType() {
+	    return scriptType;
 	}
-	public boolean usesColorInput() {
-		return usesColorInput;
+	void setScriptType(ScriptType value) {
+	    scriptType = value;
 	}
 	
+	// one of the following three methods will get created from the user-entered script
 	public int getOutputColorForGrayscaleInput(int y, int row, int col, int width, int height) {
 		return 0;
 	}
 	
 	public int getOutputColorForColorInput(int y, int r, int g, int b, int row, int col, int width, int height) {
 		return 0;
+	}
+	
+	public void createOutputBitmap(int width, int height) {
+	    
 	}
 	
 	static String CLASS_NAME = "com/google/imageplayground/codegen/Gen1";
@@ -94,33 +112,47 @@ public class DexImageScript {
 			// build list of instructions to see what variables are referenced
 			userScript = userScript.trim() + "\n";
 			DexCodeGenerator.InstructionContext instContext = DexCodeGenerator.createInstructionList(userScript);
-			// use color arguments if user's code requires color-specific args
-			boolean usesColor = false;
-			for(String localName : instContext.locals) {
-				if (COLOR_ARGUMENTS.contains(localName)) {
-					usesColor = true;
-					break;
-				}
-			}
 			
-			List<String> arguments = (usesColor) ? COLOR_ARGUMENTS : GRAYSCALE_ARGUMENTS;
-			String methodName = (usesColor) ? "getOutputColorForColorInput" : "getOutputColorForGrayscaleInput";
-			TypeId[] parameterTypes = new TypeId[arguments.size()];
+			ScriptType scriptType = null;
+			// if no return statement, use createOutputImage method
+			boolean hasReturn = false;
+			for(DexCodeGenerator.Instruction inst : instContext.instructions) {
+			    if (inst instanceof DexCodeGenerator.ReturnInstruction) {
+			        hasReturn = true;
+			        break;
+			    }
+			}
+			if (hasReturn) {
+	            // use color arguments if user's code requires color-specific args
+			    scriptType = ScriptType.GRAYSCALE;
+	            for(String localName : instContext.locals) {
+	                if (ScriptType.COLOR.arguments.contains(localName)) {
+	                    scriptType = ScriptType.COLOR;
+	                    break;
+	                }
+	            }
+			}
+			else {
+			    scriptType = ScriptType.MANUAL;
+			    // HACK: void method needs a returnVoid instruction
+			    instContext.instructions.add(new DexCodeGenerator.ReturnVoidInstruction());
+			}
+			TypeId[] parameterTypes = new TypeId[scriptType.arguments.size()];
 			Arrays.fill(parameterTypes, TypeId.INT);
 			
 			TypeId<?> imageScriptType = generateClass(dexMaker);
-			MethodId getOutputColorMethod = imageScriptType.getMethod(TypeId.INT, methodName, parameterTypes);
-			Code code = dexMaker.declare(getOutputColorMethod,  Modifier.PUBLIC);
+			MethodId generatedMethod = imageScriptType.getMethod(scriptType.returnType, scriptType.methodName, parameterTypes);
+			Code code = dexMaker.declare(generatedMethod,  Modifier.PUBLIC);
 			
 			Map<String, Local> localMap = new HashMap<String, Local>();
-			for(int i=0; i<arguments.size(); i++) {
-				localMap.put(arguments.get(i), code.getParameter(i, TypeId.INT));
+			for(int i=0; i<scriptType.arguments.size(); i++) {
+				localMap.put(scriptType.arguments.get(i), code.getParameter(i, TypeId.INT));
 			}
 			
-			DexCodeGenerator.generateMethodCode(code, localMap, imageScriptType, userScript);
+			DexCodeGenerator.generateMethodCode(code, localMap, imageScriptType, instContext);
 			
 			DexImageScript script = loadGeneratedClass(context, dexMaker);
-			script.setUsesColorInput(usesColor);
+			script.setScriptType(scriptType);
 			return script;
 		}
 		catch(Throwable ex) {
@@ -130,8 +162,7 @@ public class DexImageScript {
 	}
 
 	Bitmap outputBitmap = null;
-	byte[] outputBuffer = null;
-	int[] pixelBuffer;
+	int[] outputPixelBuffer;
 	
 	byte[] imageData;
 	int imageWidth;
@@ -141,8 +172,8 @@ public class DexImageScript {
 	ExecutorService workerExecutor;
 	
 	void createBuffers(int width, int height) {
-		if (pixelBuffer==null || pixelBuffer.length!=width*height) {
-			pixelBuffer = new int[width*height];
+		if (outputPixelBuffer==null || outputPixelBuffer.length!=width*height) {
+			outputPixelBuffer = new int[width*height];
 		}
 		if (outputBitmap==null || outputBitmap.getWidth()!=width || outputBitmap.getHeight()!=height) {
 			outputBitmap = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
@@ -157,26 +188,32 @@ public class DexImageScript {
 		this.imageWidth = width;
 		this.imageHeight = height;
 		
-		// create workers if needed and run them
-		if (workers==null) {
-		    workers = new ArrayList<Worker>();
-		    int numThreads = Runtime.getRuntime().availableProcessors();
-		    for(int i=0; i<numThreads; i++) {
-		        workers.add(new Worker());
-		    }
-		    workerExecutor = Executors.newFixedThreadPool(workers.size());
+		if (this.getScriptType()==ScriptType.MANUAL) {
+		    Arrays.fill(outputPixelBuffer, 255<<24); // solid black
+		    createOutputBitmap(width, height);
 		}
-		int nworkers = workers.size();
-		for(int i=0; i<workers.size(); i++) {
-		    workers.get(i).setRowRange(i*height/nworkers, (i+1)*height/nworkers);
+		else {
+	        // create workers if needed and run them
+	        if (workers==null) {
+	            workers = new ArrayList<Worker>();
+	            int numThreads = Runtime.getRuntime().availableProcessors();
+	            for(int i=0; i<numThreads; i++) {
+	                workers.add(new Worker());
+	            }
+	            workerExecutor = Executors.newFixedThreadPool(workers.size());
+	        }
+	        int nworkers = workers.size();
+	        for(int i=0; i<workers.size(); i++) {
+	            workers.get(i).setRowRange(i*height/nworkers, (i+1)*height/nworkers);
+	        }
+	        try {
+	            workerExecutor.invokeAll((Collection)workers);
+	        }
+	        catch(InterruptedException ignored) {}
 		}
-		try {
-	        workerExecutor.invokeAll((Collection)workers);
-		}
-		catch(InterruptedException ignored) {}
 
 		this.imageData = null;
-		outputBitmap.setPixels(pixelBuffer, 0, imageWidth, 0, 0, imageWidth, imageHeight);
+		outputBitmap.setPixels(outputPixelBuffer, 0, imageWidth, 0, 0, imageWidth, imageHeight);
 		return outputBitmap;
 	}
 	
@@ -199,7 +236,7 @@ public class DexImageScript {
     }
 	    
 	void computePixels(int rowStart, int rowEnd) {
-        if (this.usesColorInput()) {
+        if (this.getScriptType()==ScriptType.COLOR) {
             int[] rgb = new int[3];
             int yindex = rowStart * imageWidth;
             int uvstart = imageWidth * imageHeight;
@@ -210,7 +247,7 @@ public class DexImageScript {
                     // one VU pair of values for every two pixels, round to 2 and take it and the next byte
                     int uvindex = uvbase + (col & ~1);
                     CameraUtils.yuvToRgb(imageData[yindex], imageData[uvindex+1], imageData[uvindex], rgb);
-                    pixelBuffer[yindex] = getOutputColorForColorInput(0xff & imageData[yindex], 
+                    outputPixelBuffer[yindex] = getOutputColorForColorInput(0xff & imageData[yindex], 
                             rgb[0], rgb[1], rgb[2], row, col, imageWidth, imageHeight);
                     yindex++;
                 }
@@ -220,7 +257,7 @@ public class DexImageScript {
             int index = rowStart * imageWidth;
             for(int row=rowStart; row<rowEnd; row++) {
                 for(int col=0; col<imageWidth; col++) {
-                    pixelBuffer[index] = getOutputColorForGrayscaleInput(0xff & imageData[index], row, col, 
+                    outputPixelBuffer[index] = getOutputColorForGrayscaleInput(0xff & imageData[index], row, col, 
                             imageWidth, imageHeight);
                     index++;
                 }
@@ -331,4 +368,35 @@ public class DexImageScript {
 		if (b>255) b = 255;
 		return 0xff000000 | (r << 16) | (g << 8) | b;
 	}
+	
+	// these methods are used by manual user scripts to set individual pixels and perform drawing operations
+    public int script_setrgb(int row, int col, int r, int g, int b) {
+        if (row<0) row = 0;
+        if (row>=imageHeight) row = imageHeight-1;
+        if (col<0) col = 0;
+        if (col>=imageWidth) col = imageWidth-1;
+        
+        outputPixelBuffer[row*imageWidth + col] = 0xff000000 | (r << 16) | (g << 8) | b;
+        return 0;
+    }
+    
+    public int script_setgray(int row, int col, int gray) {
+        if (row<0) row = 0;
+        if (row>=imageHeight) row = imageHeight-1;
+        if (col<0) col = 0;
+        if (col>=imageWidth) col = imageWidth-1;
+        
+        outputPixelBuffer[row*imageWidth + col] = 0xff000000 | (gray << 16) | (gray << 8) | gray;
+        return 0;
+    }
+    
+    public int script_setcolor(int row, int col, int color) {
+        if (row<0) row = 0;
+        if (row>=imageHeight) row = imageHeight-1;
+        if (col<0) col = 0;
+        if (col>=imageWidth) col = imageWidth-1;
+        
+        outputPixelBuffer[row*imageWidth + col] = color;
+        return 0;
+    }
 }

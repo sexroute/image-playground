@@ -122,8 +122,8 @@ public class DexCodeGenerator {
     	return context;
     }
     
-    public static void generateMethodCode(Code code, Map<String, Local> providedLocals, TypeId thisType, String userScript) throws Exception {
-    	InstructionContext context = createInstructionList(userScript);
+    public static void generateMethodCode(Code code, Map<String, Local> providedLocals, 
+            TypeId thisType, InstructionContext context) throws Exception {
     	// create locals that aren't provided
     	Map<String, Local> allLocals = new HashMap(providedLocals);
     	for(String localName : context.locals) {
@@ -136,6 +136,11 @@ public class DexCodeGenerator {
     	for(Instruction inst : context.instructions) {
     		inst.generateCode(code, allLocals, context.labels, thisType);
     	}
+    }
+    
+    public static void generateMethodCode(Code code, Map<String, Local> providedLocals, TypeId thisType, String userScript) throws Exception {
+        InstructionContext context = createInstructionList(userScript);
+        generateMethodCode(code, providedLocals, thisType, context);
     }
 	
     static abstract class Instruction {
@@ -333,6 +338,16 @@ public class DexCodeGenerator {
         
         public String toString() {
             return String.format("JUMP %s", labelName);
+        }        
+    }
+    
+    static class ReturnVoidInstruction extends Instruction {
+        public void generateCode(Code code, Map<String, Local> localMap, Map<String, Label> labelMap, TypeId thisType) {
+            code.returnVoid();
+        }
+        
+        public String toString() {
+            return "RETURN";
         }        
     }
     
