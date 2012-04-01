@@ -455,6 +455,7 @@ public class DexCodeGenerator {
         else if ("for".equals(token)) {
             // "for i,10 [block]" is equivalent to "i=0; while i<10 {[block]; i=i+1}"
             String loopIndexLocal = tree.getChild(0).getText();
+            context.locals.add(loopIndexLocal);
             String tmpLocal = context.nextSyntheticLocal();
             String topLabelName = context.nextLabel();
             String exitLabelName = context.nextLabel();

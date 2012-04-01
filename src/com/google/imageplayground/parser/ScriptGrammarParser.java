@@ -1,4 +1,4 @@
-// $ANTLR 3.4 ScriptGrammar.g 2012-03-31 18:00:53
+// $ANTLR 3.4 ScriptGrammar.g 2012-04-01 02:12:23
 
 package com.google.imageplayground.parser;
 
@@ -499,7 +499,7 @@ public TreeAdaptor getTreeAdaptor() {
                     stream_assign.add(assign10.getTree());
 
                     // AST REWRITE
-                    // elements: TYPE, assign
+                    // elements: assign, TYPE
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -709,7 +709,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
             // AST REWRITE
-            // elements: expr, 26, ID
+            // elements: ID, 26, expr
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -811,7 +811,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
             // AST REWRITE
-            // elements: 33, expr
+            // elements: expr, 33
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -1386,7 +1386,7 @@ public TreeAdaptor getTreeAdaptor() {
                     stream_atom.add(atom41.getTree());
 
                     // AST REWRITE
-                    // elements: 38, atom
+                    // elements: atom, 38
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
@@ -1707,7 +1707,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
             // AST REWRITE
-            // elements: expr, ID
+            // elements: ID, expr
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -1865,7 +1865,7 @@ public TreeAdaptor getTreeAdaptor() {
             stream_block.add(block59.getTree());
 
             // AST REWRITE
-            // elements: boolexp, 32, block
+            // elements: 32, block, boolexp
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -2016,7 +2016,7 @@ public TreeAdaptor getTreeAdaptor() {
             stream_block.add(block64.getTree());
 
             // AST REWRITE
-            // elements: block, boolexp, 34
+            // elements: 34, block, boolexp
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -2078,7 +2078,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "boolexp"
-    // ScriptGrammar.g:74:1: boolexp : boolterm ( '==' ^| '!=' ^| '>' ^| '>=' ^| '<' ^| '<=' ) boolterm ;
+    // ScriptGrammar.g:74:1: boolexp : boolterm ( '==' ^| '!=' ^| '>' ^| '>=' ^| '<' ^| '<=' ^) boolterm ;
     public final ScriptGrammarParser.boolexp_return boolexp() throws RecognitionException {
         ScriptGrammarParser.boolexp_return retval = new ScriptGrammarParser.boolexp_return();
         retval.start = input.LT(1);
@@ -2105,8 +2105,8 @@ public TreeAdaptor getTreeAdaptor() {
         CommonTree string_literal71_tree=null;
 
         try {
-            // ScriptGrammar.g:74:8: ( boolterm ( '==' ^| '!=' ^| '>' ^| '>=' ^| '<' ^| '<=' ) boolterm )
-            // ScriptGrammar.g:74:11: boolterm ( '==' ^| '!=' ^| '>' ^| '>=' ^| '<' ^| '<=' ) boolterm
+            // ScriptGrammar.g:74:8: ( boolterm ( '==' ^| '!=' ^| '>' ^| '>=' ^| '<' ^| '<=' ^) boolterm )
+            // ScriptGrammar.g:74:11: boolterm ( '==' ^| '!=' ^| '>' ^| '>=' ^| '<' ^| '<=' ^) boolterm
             {
             root_0 = (CommonTree)adaptor.nil();
 
@@ -2118,7 +2118,7 @@ public TreeAdaptor getTreeAdaptor() {
 
             adaptor.addChild(root_0, boolterm65.getTree());
 
-            // ScriptGrammar.g:74:20: ( '==' ^| '!=' ^| '>' ^| '>=' ^| '<' ^| '<=' )
+            // ScriptGrammar.g:74:20: ( '==' ^| '!=' ^| '>' ^| '>=' ^| '<' ^| '<=' ^)
             int alt16=6;
             switch ( input.LA(1) ) {
             case 27:
@@ -2221,13 +2221,13 @@ public TreeAdaptor getTreeAdaptor() {
                     }
                     break;
                 case 6 :
-                    // ScriptGrammar.g:74:49: '<='
+                    // ScriptGrammar.g:74:49: '<=' ^
                     {
                     string_literal71=(Token)match(input,25,FOLLOW_25_in_boolexp649); 
                     string_literal71_tree = 
                     (CommonTree)adaptor.create(string_literal71)
                     ;
-                    adaptor.addChild(root_0, string_literal71_tree);
+                    root_0 = (CommonTree)adaptor.becomeRoot(string_literal71_tree, root_0);
 
 
                     }
@@ -2236,7 +2236,7 @@ public TreeAdaptor getTreeAdaptor() {
             }
 
 
-            pushFollow(FOLLOW_boolterm_in_boolexp652);
+            pushFollow(FOLLOW_boolterm_in_boolexp653);
             boolterm72=boolterm();
 
             state._fsp--;
@@ -2373,7 +2373,7 @@ public TreeAdaptor getTreeAdaptor() {
             // ScriptGrammar.g:80:7: ( 'for' ( '(' )? ID ',' forterm ( ')' )? block -> ^( 'for' ID forterm block ) )
             // ScriptGrammar.g:80:9: 'for' ( '(' )? ID ',' forterm ( ')' )? block
             {
-            string_literal74=(Token)match(input,31,FOLLOW_31_in_forexp684);  
+            string_literal74=(Token)match(input,31,FOLLOW_31_in_forexp685);  
             stream_31.add(string_literal74);
 
 
@@ -2388,7 +2388,7 @@ public TreeAdaptor getTreeAdaptor() {
                 case 1 :
                     // ScriptGrammar.g:80:15: '('
                     {
-                    char_literal75=(Token)match(input,15,FOLLOW_15_in_forexp686);  
+                    char_literal75=(Token)match(input,15,FOLLOW_15_in_forexp687);  
                     stream_15.add(char_literal75);
 
 
@@ -2398,15 +2398,15 @@ public TreeAdaptor getTreeAdaptor() {
             }
 
 
-            ID76=(Token)match(input,ID,FOLLOW_ID_in_forexp689);  
+            ID76=(Token)match(input,ID,FOLLOW_ID_in_forexp690);  
             stream_ID.add(ID76);
 
 
-            char_literal77=(Token)match(input,19,FOLLOW_19_in_forexp691);  
+            char_literal77=(Token)match(input,19,FOLLOW_19_in_forexp692);  
             stream_19.add(char_literal77);
 
 
-            pushFollow(FOLLOW_forterm_in_forexp693);
+            pushFollow(FOLLOW_forterm_in_forexp694);
             forterm78=forterm();
 
             state._fsp--;
@@ -2424,7 +2424,7 @@ public TreeAdaptor getTreeAdaptor() {
                 case 1 :
                     // ScriptGrammar.g:80:35: ')'
                     {
-                    char_literal79=(Token)match(input,16,FOLLOW_16_in_forexp695);  
+                    char_literal79=(Token)match(input,16,FOLLOW_16_in_forexp696);  
                     stream_16.add(char_literal79);
 
 
@@ -2434,7 +2434,7 @@ public TreeAdaptor getTreeAdaptor() {
             }
 
 
-            pushFollow(FOLLOW_block_in_forexp698);
+            pushFollow(FOLLOW_block_in_forexp699);
             block80=block();
 
             state._fsp--;
@@ -2442,7 +2442,7 @@ public TreeAdaptor getTreeAdaptor() {
             stream_block.add(block80.getTree());
 
             // AST REWRITE
-            // elements: forterm, 31, block, ID
+            // elements: block, ID, 31, forterm
             // token labels: 
             // rule labels: retval
             // token list labels: 
@@ -2641,13 +2641,13 @@ public TreeAdaptor getTreeAdaptor() {
     public static final BitSet FOLLOW_29_in_boolexp643 = new BitSet(new long[]{0x00000000000000C0L});
     public static final BitSet FOLLOW_22_in_boolexp646 = new BitSet(new long[]{0x00000000000000C0L});
     public static final BitSet FOLLOW_25_in_boolexp649 = new BitSet(new long[]{0x00000000000000C0L});
-    public static final BitSet FOLLOW_boolterm_in_boolexp652 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_31_in_forexp684 = new BitSet(new long[]{0x0000000000008040L});
-    public static final BitSet FOLLOW_15_in_forexp686 = new BitSet(new long[]{0x0000000000000040L});
-    public static final BitSet FOLLOW_ID_in_forexp689 = new BitSet(new long[]{0x0000000000080000L});
-    public static final BitSet FOLLOW_19_in_forexp691 = new BitSet(new long[]{0x00000000000000C0L});
-    public static final BitSet FOLLOW_forterm_in_forexp693 = new BitSet(new long[]{0x0000004F801186C0L});
-    public static final BitSet FOLLOW_16_in_forexp695 = new BitSet(new long[]{0x0000004F801086C0L});
-    public static final BitSet FOLLOW_block_in_forexp698 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_boolterm_in_boolexp653 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_31_in_forexp685 = new BitSet(new long[]{0x0000000000008040L});
+    public static final BitSet FOLLOW_15_in_forexp687 = new BitSet(new long[]{0x0000000000000040L});
+    public static final BitSet FOLLOW_ID_in_forexp690 = new BitSet(new long[]{0x0000000000080000L});
+    public static final BitSet FOLLOW_19_in_forexp692 = new BitSet(new long[]{0x00000000000000C0L});
+    public static final BitSet FOLLOW_forterm_in_forexp694 = new BitSet(new long[]{0x0000004F801186C0L});
+    public static final BitSet FOLLOW_16_in_forexp696 = new BitSet(new long[]{0x0000004F801086C0L});
+    public static final BitSet FOLLOW_block_in_forexp699 = new BitSet(new long[]{0x0000000000000002L});
 
 }

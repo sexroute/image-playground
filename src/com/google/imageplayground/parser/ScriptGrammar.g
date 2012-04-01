@@ -71,7 +71,7 @@ ifexp:  'if' '('? boolexp ')'? block -> ^('if' boolexp block)
 whileexp:  'while' '('? boolexp ')'? block -> ^('while' boolexp block)
     ;
     
-boolexp:  boolterm ('=='^|'!='^|'>'^|'>='^|'<'^|'<=') boolterm
+boolexp:  boolterm ('=='^|'!='^|'>'^|'>='^|'<'^|'<='^) boolterm
     ;
 
 boolterm: (ID|INT)
