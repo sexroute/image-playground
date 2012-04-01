@@ -253,6 +253,7 @@ public class ImagePlaygroundActivity extends Activity implements Camera.PreviewC
     
     DexImageScript dexScript = null;
     String lastUserScript = "";
+    SyntaxHighlighter syntaxHighlighter = new SyntaxHighlighter();
     // To protect against infinite loops, set a flag when the script changes, and unset it only if the script
     // successfully produces several frames in a certain time limit. On startup, if the flag is set, the script
     // will not start running automatically. This won't prevent infinite loops from hanging, but it will allow
@@ -278,6 +279,7 @@ public class ImagePlaygroundActivity extends Activity implements Camera.PreviewC
 	                lastUserScript = userScript;
 	                saveScript(userScript);
 	                dexScript = DexImageScript.createScript(this, userScript);
+	                syntaxHighlighter.applySyntaxHighlighting(scriptField.getText());
 	            }
 	            Bitmap bitmap = null;
 	            if (dexScript != null) {
