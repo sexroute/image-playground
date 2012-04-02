@@ -59,6 +59,7 @@ public class DexImageScript {
     }
 
     ScriptType scriptType;
+    int frameNumber = 0;
 	Random random = new Random();
 	
 	ScriptType getScriptType() {
@@ -182,6 +183,7 @@ public class DexImageScript {
 	public Bitmap getBitmapForImageData(byte[] imageData, int width, int height) {
 		createBuffers(width, height);
 		
+		this.frameNumber++;
 		// semi-hack: copy data to instance variables so script_ methods below can access them
 		this.imageData = imageData;
 		this.imageWidth = width;
@@ -397,5 +399,55 @@ public class DexImageScript {
         
         outputPixelBuffer[row*imageWidth + col] = color;
         return 0;
+    }
+    
+    public int script_framenumber() {
+        return frameNumber;
+    }
+    
+    // experimental storage APIs
+    Map<Integer, Integer> scriptIntStorage = new HashMap<Integer, Integer>();
+    Map<Integer, List<Integer>> scriptIntListStorage = new HashMap<Integer, List<Integer>>();
+    
+    public int script_putint(int key, int value) {
+        scriptIntStorage.put(key, value);
+        return value;
+    }
+    
+    public int script_getint(int key) {
+        Integer val = scriptIntStorage.get(key);
+        if (val==null) val = 0;
+        return val;
+    }
+    
+    public int script_listclear(int key) {
+        scriptIntListStorage.remove(key);
+        return 0;
+    }
+    
+    public int script_listsize(int key) {
+        List<Integer> list = scriptIntListStorage.get(key);
+        return (list!=null) ? list.size() : 0;
+    }
+    
+    public int script_listread(int key, int index) {
+        List<Integer> list = scriptIntListStorage.get(key);
+        if (list==null || index<0 || index>=list.size()) return 0;
+        return list.get(index);
+    }
+    
+    public int script_listpush(int key, int value) {
+        List<Integer> list = scriptIntListStorage.get(key);
+        if (list==null) scriptIntListStorage.put(key, list=new ArrayList<Integer>());
+        list.add(value);
+        return list.size();
+    }
+    
+    public int script_listpop(int key) {
+        List<Integer> list = scriptIntListStorage.get(key);
+        if (list==null) return 0;
+        int size = list.size();
+        if (size==0) return 0;
+        return list.remove(size-1);
     }
 }

@@ -428,12 +428,6 @@ public class DexCodeGenerator {
             return "";
         }
         else if ("if".equals(token)) {
-            String labelName = context.nextLabel();
-            generateInstructionsForBooleanExpression(tree.getChild(0), labelName, context);
-            generateInstructions(tree.getChild(1), context);
-            context.instructions.add(new LabelInstruction(labelName));
-        }
-        else if ("if".equals(token)) {
             // jump to label past block if condition is false
             String labelName = context.nextLabel();
             generateInstructionsForBooleanExpression(tree.getChild(0), labelName, context);

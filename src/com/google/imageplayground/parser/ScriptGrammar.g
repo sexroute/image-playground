@@ -62,7 +62,7 @@ atom:   INT
     |   funcall
     ;
 
-funcall: ID '(' expr (',' expr)* ')' -> ^(CALL ID expr*)
+funcall: ID '(' expr? (',' expr)* ')' -> ^(CALL ID expr*)
     ;
 
 ifexp:  'if' '('? boolexp ')'? block -> ^('if' boolexp block)
