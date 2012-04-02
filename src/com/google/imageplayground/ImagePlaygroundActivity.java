@@ -41,6 +41,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.preference.PreferenceManager;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
@@ -85,6 +87,7 @@ public class ImagePlaygroundActivity extends Activity implements Camera.PreviewC
         resultView = (ResultView)findViewById(R.id.resultView);
         cameraCheckbox = (CheckBox)findViewById(R.id.cameraCheckbox);
         scriptField = (EditText)findViewById(R.id.scriptText);
+        scriptField.addTextChangedListener(new SyntaxHighlighterTextWatcher(scriptField, new SyntaxHighlighter()));
         
         fullScreenControls = findViewById(R.id.fullScreenControls);
         fullScreenResultView = (ResultView)findViewById(R.id.fullScreenResultView);
@@ -253,7 +256,6 @@ public class ImagePlaygroundActivity extends Activity implements Camera.PreviewC
     
     DexImageScript dexScript = null;
     String lastUserScript = "";
-    SyntaxHighlighter syntaxHighlighter = new SyntaxHighlighter();
     // To protect against infinite loops, set a flag when the script changes, and unset it only if the script
     // successfully produces several frames in a certain time limit. On startup, if the flag is set, the script
     // will not start running automatically. This won't prevent infinite loops from hanging, but it will allow
@@ -279,7 +281,6 @@ public class ImagePlaygroundActivity extends Activity implements Camera.PreviewC
 	                lastUserScript = userScript;
 	                saveScript(userScript);
 	                dexScript = DexImageScript.createScript(this, userScript);
-	                syntaxHighlighter.applySyntaxHighlighting(scriptField.getText());
 	            }
 	            Bitmap bitmap = null;
 	            if (dexScript != null) {
@@ -336,5 +337,24 @@ public class ImagePlaygroundActivity extends Activity implements Camera.PreviewC
 			}
 		}
     	return super.onKeyDown(keyCode, event);
+    }
+    
+    class SyntaxHighlighterTextWatcher implements TextWatcher {
+        SyntaxHighlighter highlighter;
+        EditText editText;
+        
+        public SyntaxHighlighterTextWatcher(EditText editText, SyntaxHighlighter highlighter) {
+            this.editText = editText;
+            this.highlighter = highlighter;
+        }
+        
+        @Override
+        public void afterTextChanged(Editable s) {
+            this.highlighter.applySyntaxHighlighting(editText.getText());
+        }
+
+        @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+        @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+        
     }
 }
