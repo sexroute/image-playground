@@ -1,4 +1,4 @@
-// $ANTLR 3.4 ScriptGrammar.g 2012-04-01 23:56:01
+// $ANTLR 3.4 ScriptGrammar.g 2012-04-02 23:53:05
 
 package com.google.imageplayground.parser;
 
@@ -2356,7 +2356,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "forexp"
-    // ScriptGrammar.g:80:1: forexp : 'for' ( '(' )? ID ',' forterm ( ')' )? block -> ^( 'for' ID forterm block ) ;
+    // ScriptGrammar.g:80:1: forexp : 'for' ( '(' )? ID ( ',' forterm )* ( ')' )? block -> ^( 'for' ID ( forterm )* block ) ;
     public final ScriptGrammarParser.forexp_return forexp() throws RecognitionException {
         ScriptGrammarParser.forexp_return retval = new ScriptGrammarParser.forexp_return();
         retval.start = input.LT(1);
@@ -2387,8 +2387,8 @@ public TreeAdaptor getTreeAdaptor() {
         RewriteRuleSubtreeStream stream_forterm=new RewriteRuleSubtreeStream(adaptor,"rule forterm");
         RewriteRuleSubtreeStream stream_block=new RewriteRuleSubtreeStream(adaptor,"rule block");
         try {
-            // ScriptGrammar.g:80:7: ( 'for' ( '(' )? ID ',' forterm ( ')' )? block -> ^( 'for' ID forterm block ) )
-            // ScriptGrammar.g:80:9: 'for' ( '(' )? ID ',' forterm ( ')' )? block
+            // ScriptGrammar.g:80:7: ( 'for' ( '(' )? ID ( ',' forterm )* ( ')' )? block -> ^( 'for' ID ( forterm )* block ) )
+            // ScriptGrammar.g:80:9: 'for' ( '(' )? ID ( ',' forterm )* ( ')' )? block
             {
             string_literal74=(Token)match(input,31,FOLLOW_31_in_forexp686);  
             stream_31.add(string_literal74);
@@ -2419,29 +2419,53 @@ public TreeAdaptor getTreeAdaptor() {
             stream_ID.add(ID76);
 
 
-            char_literal77=(Token)match(input,19,FOLLOW_19_in_forexp693);  
-            stream_19.add(char_literal77);
+            // ScriptGrammar.g:80:23: ( ',' forterm )*
+            loop19:
+            do {
+                int alt19=2;
+                int LA19_0 = input.LA(1);
+
+                if ( (LA19_0==19) ) {
+                    alt19=1;
+                }
 
 
-            pushFollow(FOLLOW_forterm_in_forexp695);
-            forterm78=forterm();
+                switch (alt19) {
+            	case 1 :
+            	    // ScriptGrammar.g:80:24: ',' forterm
+            	    {
+            	    char_literal77=(Token)match(input,19,FOLLOW_19_in_forexp694);  
+            	    stream_19.add(char_literal77);
 
-            state._fsp--;
 
-            stream_forterm.add(forterm78.getTree());
+            	    pushFollow(FOLLOW_forterm_in_forexp696);
+            	    forterm78=forterm();
 
-            // ScriptGrammar.g:80:35: ( ')' )?
-            int alt19=2;
-            int LA19_0 = input.LA(1);
+            	    state._fsp--;
 
-            if ( (LA19_0==16) ) {
-                alt19=1;
+            	    stream_forterm.add(forterm78.getTree());
+
+            	    }
+            	    break;
+
+            	default :
+            	    break loop19;
+                }
+            } while (true);
+
+
+            // ScriptGrammar.g:80:38: ( ')' )?
+            int alt20=2;
+            int LA20_0 = input.LA(1);
+
+            if ( (LA20_0==16) ) {
+                alt20=1;
             }
-            switch (alt19) {
+            switch (alt20) {
                 case 1 :
-                    // ScriptGrammar.g:80:35: ')'
+                    // ScriptGrammar.g:80:38: ')'
                     {
-                    char_literal79=(Token)match(input,16,FOLLOW_16_in_forexp697);  
+                    char_literal79=(Token)match(input,16,FOLLOW_16_in_forexp700);  
                     stream_16.add(char_literal79);
 
 
@@ -2451,7 +2475,7 @@ public TreeAdaptor getTreeAdaptor() {
             }
 
 
-            pushFollow(FOLLOW_block_in_forexp700);
+            pushFollow(FOLLOW_block_in_forexp703);
             block80=block();
 
             state._fsp--;
@@ -2469,9 +2493,9 @@ public TreeAdaptor getTreeAdaptor() {
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
             root_0 = (CommonTree)adaptor.nil();
-            // 80:46: -> ^( 'for' ID forterm block )
+            // 80:49: -> ^( 'for' ID ( forterm )* block )
             {
-                // ScriptGrammar.g:80:49: ^( 'for' ID forterm block )
+                // ScriptGrammar.g:80:52: ^( 'for' ID ( forterm )* block )
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot(
@@ -2482,7 +2506,12 @@ public TreeAdaptor getTreeAdaptor() {
                 stream_ID.nextNode()
                 );
 
-                adaptor.addChild(root_1, stream_forterm.nextTree());
+                // ScriptGrammar.g:80:63: ( forterm )*
+                while ( stream_forterm.hasNext() ) {
+                    adaptor.addChild(root_1, stream_forterm.nextTree());
+
+                }
+                stream_forterm.reset();
 
                 adaptor.addChild(root_1, stream_block.nextTree());
 
@@ -2661,10 +2690,10 @@ public TreeAdaptor getTreeAdaptor() {
     public static final BitSet FOLLOW_boolterm_in_boolexp654 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_31_in_forexp686 = new BitSet(new long[]{0x0000000000008040L});
     public static final BitSet FOLLOW_15_in_forexp688 = new BitSet(new long[]{0x0000000000000040L});
-    public static final BitSet FOLLOW_ID_in_forexp691 = new BitSet(new long[]{0x0000000000080000L});
-    public static final BitSet FOLLOW_19_in_forexp693 = new BitSet(new long[]{0x00000000000000C0L});
-    public static final BitSet FOLLOW_forterm_in_forexp695 = new BitSet(new long[]{0x0000004F801186C0L});
-    public static final BitSet FOLLOW_16_in_forexp697 = new BitSet(new long[]{0x0000004F801086C0L});
-    public static final BitSet FOLLOW_block_in_forexp700 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ID_in_forexp691 = new BitSet(new long[]{0x0000004F801986C0L});
+    public static final BitSet FOLLOW_19_in_forexp694 = new BitSet(new long[]{0x00000000000000C0L});
+    public static final BitSet FOLLOW_forterm_in_forexp696 = new BitSet(new long[]{0x0000004F801986C0L});
+    public static final BitSet FOLLOW_16_in_forexp700 = new BitSet(new long[]{0x0000004F801086C0L});
+    public static final BitSet FOLLOW_block_in_forexp703 = new BitSet(new long[]{0x0000000000000002L});
 
 }

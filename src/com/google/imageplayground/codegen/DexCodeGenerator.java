@@ -370,6 +370,7 @@ public class DexCodeGenerator {
     	return generateInstructionsForSubtree(tree, context, null);
     }
     
+    // TODO: refactor
     static String generateInstructionsForSubtree(Tree tree, InstructionContext context, String targetName) {
     	String token = tree.getText();
     	if (tree.getChildCount()==0) {
@@ -447,23 +448,34 @@ public class DexCodeGenerator {
             context.instructions.add(new LabelInstruction(exitLabelName));
         }
         else if ("for".equals(token)) {
+            int numChildren = tree.getChildCount();
+            if (numChildren<3 || numChildren>5) {
+                throw new IllegalStateException("'for' with invalid number of children:" + numChildren);
+            }
             // "for i,10 [block]" is equivalent to "i=0; while i<10 {[block]; i=i+1}"
-            String loopIndexLocal = tree.getChild(0).getText();
+            String loopIndexLocal = tree.getChild(0).getText(); // must be variable
             context.locals.add(loopIndexLocal);
             String tmpLocal = context.nextSyntheticLocal();
             String topLabelName = context.nextLabel();
             String exitLabelName = context.nextLabel();
-            // set loop index to 0
-            context.instructions.add(new ConstantIntAssignment(loopIndexLocal, 0));
+            
+            // variants: "for i,start,end [block]", "for i,start,end,step [block]"
+            // start defaults to 0, step to 1
+            String loopStartExpr = (numChildren>=4) ? tree.getChild(1).getText() : "0";
+            String loopEndExpr = (numChildren>=4) ? tree.getChild(2).getText() : tree.getChild(1).getText();
+            String stepExpr = (numChildren>=5) ? tree.getChild(3).getText() : "1";
+            
+            // set loop index to start
+            resolveLocal(loopStartExpr, context, loopIndexLocal);
             // top label
             context.instructions.add(new LabelInstruction(topLabelName));
             // jump to end if loop limit reached
-            resolveLocal(tree.getChild(1).getText(), context, tmpLocal);
+            resolveLocal(loopEndExpr, context, tmpLocal);
             context.instructions.add(new CompareInstruction(loopIndexLocal, Comparison.GE, tmpLocal, exitLabelName));
             // loop body
-            generateInstructions(tree.getChild(2), context);
+            generateInstructions(tree.getChild(numChildren-1), context);
             // increment loop index, then jump back to top
-            context.instructions.add(new ConstantIntAssignment(tmpLocal, 1));
+            resolveLocal(stepExpr, context, tmpLocal);
             context.instructions.add(new BinaryIntOperation(loopIndexLocal, BinaryOp.ADD, loopIndexLocal, tmpLocal));
             context.instructions.add(new JumpInstruction(topLabelName));
             // exit label

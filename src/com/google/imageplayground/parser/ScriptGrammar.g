@@ -77,7 +77,7 @@ boolexp:  boolterm ('=='^|'!='^|'>'^|'>='^|'<'^|'<='^) boolterm
 boolterm: (ID|INT)
     ;
     
-forexp: 'for' '('? ID ',' forterm ')'? block -> ^('for' ID forterm block)
+forexp: 'for' '('? ID (',' forterm)* ')'? block -> ^('for' ID forterm* block)
     ;
     
 forterm: (ID|INT)
