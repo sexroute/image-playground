@@ -84,7 +84,7 @@ forterm: (ID|INT)
     ;
 
 TYPE: ('int'|'long'|'float'|'double'|'boolean') ;
-ID  :   ('a'..'z'|'A'..'Z')+ ;
+ID  :   ('a'..'z'|'A'..'Z')('a'..'z'|'A'..'Z'|'0'..'9')* ;
 INT :   '0'..'9'+ ;
 NEWLINE:'\r'? '\n' ;
 WS  :   (' '|'\t')+ {skip();} ;

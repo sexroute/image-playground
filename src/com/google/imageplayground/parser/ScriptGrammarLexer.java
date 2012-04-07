@@ -1,4 +1,4 @@
-// $ANTLR 3.4 ScriptGrammar.g 2012-04-02 23:53:05
+// $ANTLR 3.4 ScriptGrammar.g 2012-04-07 16:24:23
 
 package com.google.imageplayground.parser;
 
@@ -761,17 +761,26 @@ public class ScriptGrammarLexer extends Lexer {
         try {
             int _type = ID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ScriptGrammar.g:87:5: ( ( 'a' .. 'z' | 'A' .. 'Z' )+ )
-            // ScriptGrammar.g:87:9: ( 'a' .. 'z' | 'A' .. 'Z' )+
+            // ScriptGrammar.g:87:5: ( ( 'a' .. 'z' | 'A' .. 'Z' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' )* )
+            // ScriptGrammar.g:87:9: ( 'a' .. 'z' | 'A' .. 'Z' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' )*
             {
-            // ScriptGrammar.g:87:9: ( 'a' .. 'z' | 'A' .. 'Z' )+
-            int cnt2=0;
+            if ( (input.LA(1) >= 'A' && input.LA(1) <= 'Z')||(input.LA(1) >= 'a' && input.LA(1) <= 'z') ) {
+                input.consume();
+            }
+            else {
+                MismatchedSetException mse = new MismatchedSetException(null,input);
+                recover(mse);
+                throw mse;
+            }
+
+
+            // ScriptGrammar.g:87:28: ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' )*
             loop2:
             do {
                 int alt2=2;
                 int LA2_0 = input.LA(1);
 
-                if ( ((LA2_0 >= 'A' && LA2_0 <= 'Z')||(LA2_0 >= 'a' && LA2_0 <= 'z')) ) {
+                if ( ((LA2_0 >= '0' && LA2_0 <= '9')||(LA2_0 >= 'A' && LA2_0 <= 'Z')||(LA2_0 >= 'a' && LA2_0 <= 'z')) ) {
                     alt2=1;
                 }
 
@@ -780,7 +789,7 @@ public class ScriptGrammarLexer extends Lexer {
             	case 1 :
             	    // ScriptGrammar.g:
             	    {
-            	    if ( (input.LA(1) >= 'A' && input.LA(1) <= 'Z')||(input.LA(1) >= 'a' && input.LA(1) <= 'z') ) {
+            	    if ( (input.LA(1) >= '0' && input.LA(1) <= '9')||(input.LA(1) >= 'A' && input.LA(1) <= 'Z')||(input.LA(1) >= 'a' && input.LA(1) <= 'z') ) {
             	        input.consume();
             	    }
             	    else {
@@ -794,12 +803,8 @@ public class ScriptGrammarLexer extends Lexer {
             	    break;
 
             	default :
-            	    if ( cnt2 >= 1 ) break loop2;
-                        EarlyExitException eee =
-                            new EarlyExitException(2, input);
-                        throw eee;
+            	    break loop2;
                 }
-                cnt2++;
             } while (true);
 
 
@@ -1249,10 +1254,10 @@ public class ScriptGrammarLexer extends Lexer {
         "\114\uffff";
     static final String DFA6_minS =
         "\1\11\12\uffff\1\74\2\75\1\154\1\146\1\145\1\150\4\uffff\3\157\4"+
-        "\uffff\1\74\7\uffff\1\162\1\157\1\101\2\164\1\151\1\156\1\165\1"+
-        "\157\2\uffff\1\101\1\141\1\uffff\1\101\1\165\1\154\1\147\1\142\1"+
-        "\154\1\uffff\1\164\1\uffff\1\162\1\145\1\101\1\154\1\145\1\101\1"+
-        "\156\1\101\1\145\1\141\1\101\1\uffff\1\101\1\156\1\uffff\1\101";
+        "\uffff\1\74\7\uffff\1\162\1\157\1\60\2\164\1\151\1\156\1\165\1\157"+
+        "\2\uffff\1\60\1\141\1\uffff\1\60\1\165\1\154\1\147\1\142\1\154\1"+
+        "\uffff\1\164\1\uffff\1\162\1\145\1\60\1\154\1\145\1\60\1\156\1\60"+
+        "\1\145\1\141\1\60\1\uffff\1\60\1\156\1\uffff\1\60";
     static final String DFA6_maxS =
         "\1\176\12\uffff\2\75\1\76\1\157\1\156\1\145\1\150\4\uffff\3\157"+
         "\4\uffff\1\74\7\uffff\1\162\1\157\1\172\2\164\1\151\1\156\1\165"+
@@ -1310,7 +1315,7 @@ public class ScriptGrammarLexer extends Lexer {
             "",
             "\1\60",
             "\1\61",
-            "\32\31\6\uffff\32\31",
+            "\12\31\7\uffff\32\31\6\uffff\32\31",
             "\1\63",
             "\1\64",
             "\1\65",
@@ -1319,10 +1324,10 @@ public class ScriptGrammarLexer extends Lexer {
             "\1\70",
             "",
             "",
-            "\32\31\6\uffff\32\31",
+            "\12\31\7\uffff\32\31\6\uffff\32\31",
             "\1\72",
             "",
-            "\32\31\6\uffff\32\31",
+            "\12\31\7\uffff\32\31\6\uffff\32\31",
             "\1\74",
             "\1\75",
             "\1\76",
@@ -1333,20 +1338,20 @@ public class ScriptGrammarLexer extends Lexer {
             "",
             "\1\102",
             "\1\103",
-            "\32\31\6\uffff\32\31",
+            "\12\31\7\uffff\32\31\6\uffff\32\31",
             "\1\104",
             "\1\105",
-            "\32\31\6\uffff\32\31",
+            "\12\31\7\uffff\32\31\6\uffff\32\31",
             "\1\106",
-            "\32\31\6\uffff\32\31",
+            "\12\31\7\uffff\32\31\6\uffff\32\31",
             "\1\110",
             "\1\111",
-            "\32\31\6\uffff\32\31",
+            "\12\31\7\uffff\32\31\6\uffff\32\31",
             "",
-            "\32\31\6\uffff\32\31",
+            "\12\31\7\uffff\32\31\6\uffff\32\31",
             "\1\113",
             "",
-            "\32\31\6\uffff\32\31"
+            "\12\31\7\uffff\32\31\6\uffff\32\31"
     };
 
     static final short[] DFA6_eot = DFA.unpackEncodedString(DFA6_eotS);
