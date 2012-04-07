@@ -246,15 +246,20 @@ public class DexCodeGenerator {
     			for(Method m : declaredMethods) {
     				if (methodName.equals(m.getName())) {
     					Class[] paramClasses = m.getParameterTypes();
-    					parameterTypes = new TypeId[paramClasses.length];
-    					for(int i=0; i<paramClasses.length; i++) {
-    						parameterTypes[i] = TypeId.get(paramClasses[i]);
+    					if (paramClasses.length==this.argumentLocals.length) {
+                            parameterTypes = new TypeId[paramClasses.length];
+                            for(int i=0; i<paramClasses.length; i++) {
+                                parameterTypes[i] = TypeId.get(paramClasses[i]);
+                            }
     					}
     				}
     			}
     		}
     		catch(Exception ex) {
     			throw new IllegalStateException(ex);
+    		}
+    		if (parameterTypes==null) {
+    		    throw new IllegalStateException("Function " + functionName + " not found");
     		}
     		MethodId methodId = superclass.getMethod(TypeId.INT, methodName, parameterTypes);
     		Local[] parameterLocals = new Local[argumentLocals.length];

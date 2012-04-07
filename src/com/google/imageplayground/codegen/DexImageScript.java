@@ -20,6 +20,7 @@ import java.io.File;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
@@ -31,6 +32,8 @@ import java.util.concurrent.Executors;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.util.Log;
 
 import com.google.dexmaker.Code;
@@ -38,6 +41,8 @@ import com.google.dexmaker.DexMaker;
 import com.google.dexmaker.Local;
 import com.google.dexmaker.MethodId;
 import com.google.dexmaker.TypeId;
+import com.google.imageplayground.drawing.DrawCommand;
+import com.google.imageplayground.drawing.DrawOperation;
 import com.google.imageplayground.util.CameraUtils;
 
 public class DexImageScript {
@@ -171,6 +176,8 @@ public class DexImageScript {
 	List<Worker> workers;
 	ExecutorService workerExecutor;
 	
+	List<DrawCommand> drawCommands = new ArrayList<DrawCommand>();
+	
 	void createBuffers(int width, int height) {
 		if (outputPixelBuffer==null || outputPixelBuffer.length!=width*height) {
 			outputPixelBuffer = new int[width*height];
@@ -188,6 +195,7 @@ public class DexImageScript {
 		this.imageData = imageData;
 		this.imageWidth = width;
 		this.imageHeight = height;
+		this.drawCommands.clear();
 		
 		if (this.getScriptType()==ScriptType.MANUAL) {
 		    Arrays.fill(outputPixelBuffer, 255<<24); // solid black
@@ -215,6 +223,14 @@ public class DexImageScript {
 
 		this.imageData = null;
 		outputBitmap.setPixels(outputPixelBuffer, 0, imageWidth, 0, 0, imageWidth, imageHeight);
+		if (drawCommands.size() > 0) {
+		    Canvas canvas = new Canvas(outputBitmap);
+		    Paint paint = new Paint();
+		    paint.setARGB(255, 255, 255, 255);
+		    for(DrawCommand command : drawCommands) {
+		        command.execute(canvas, paint);
+		    }
+		}
 		return outputBitmap;
 	}
 	
@@ -405,6 +421,30 @@ public class DexImageScript {
         return frameNumber;
     }
     
+    // timing functions
+    public int script_time() {
+        return (int)System.currentTimeMillis();
+    }
+    
+    public int script_getyear() {
+        return Calendar.getInstance().get(Calendar.YEAR);
+    }
+    public int script_getmonth() {
+        return 1 + Calendar.getInstance().get(Calendar.MONTH);
+    }
+    public int script_getday() {
+        return Calendar.getInstance().get(Calendar.DAY_OF_MONTH);
+    }
+    public int script_gethour() {
+        return Calendar.getInstance().get(Calendar.HOUR);
+    }
+    public int script_getminute() {
+        return Calendar.getInstance().get(Calendar.MINUTE);
+    }
+    public int script_getsecond() {
+        return Calendar.getInstance().get(Calendar.SECOND);
+    }
+    
     // experimental storage APIs
     Map<Integer, Integer> scriptIntStorage = new HashMap<Integer, Integer>();
     Map<Integer, List<Integer>> scriptIntListStorage = new HashMap<Integer, List<Integer>>();
@@ -449,5 +489,48 @@ public class DexImageScript {
         int size = list.size();
         if (size==0) return 0;
         return list.remove(size-1);
+    }
+    
+    
+    // drawing functions
+    int addDrawCommand(DrawOperation operation, Integer... args) {
+        drawCommands.add(new DrawCommand(operation, args));
+        return 0;
+    }
+    
+    public int script_setpaint(int r, int g, int b) {
+        return addDrawCommand(DrawOperation.SET_PAINT, r, g, b, 255);
+    }
+
+    public int script_setpaint(int r, int g, int b, int a) {
+        return addDrawCommand(DrawOperation.SET_PAINT, r, g, b, a);
+    }
+
+    public int script_drawline(int x1, int y1, int x2, int y2) {
+        return addDrawCommand(DrawOperation.LINE, x1, y1, x2, y2);
+    }
+    
+    public int script_fillrect(int x1, int y1, int x2, int y2) {
+        return addDrawCommand(DrawOperation.FILL_RECT, x1, y1, x2, y2);
+    }
+    
+    public int script_framerect(int x1, int y1, int x2, int y2) {
+        return addDrawCommand(DrawOperation.FRAME_RECT, x1, y1, x2, y2);
+    }
+    
+    public int script_fillcircle(int cx, int cy, int radius) {
+        return addDrawCommand(DrawOperation.FILL_CIRCLE, cx, cy, radius);
+    }
+
+    public int script_framecircle(int cx, int cy, int radius) {
+        return addDrawCommand(DrawOperation.FRAME_CIRCLE, cx, cy, radius);
+    }
+
+    public int script_drawnumber(int x, int y, int value) {
+        return addDrawCommand(DrawOperation.DRAW_NUMBER, x, y, value);
+    }
+    
+    public int script_drawchar(int x, int y, int value) {
+        return addDrawCommand(DrawOperation.DRAW_CHAR, x, y, value);
     }
 }

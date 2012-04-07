@@ -19,6 +19,7 @@ package com.google.imageplayground;
 import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,7 +34,15 @@ public class SyntaxHighlighter {
     // Could query parser/codegen classes rather than duplicating strings here
     static Collection<String> KEYWORDS = Arrays.asList("if", "while", "for", "return");
     static Collection<String> DEFAULT_VARS = Arrays.asList("y", "r", "g", "b", "row", "col", "width", "height");
-    static Method[] scriptMethods = DexImageScript.class.getDeclaredMethods();
+    
+    static Collection<String> scriptMethods = new HashSet<String>();
+    static {
+        for(Method m : DexImageScript.class.getDeclaredMethods()) {
+            if (m.getName().startsWith("script_")) {
+                scriptMethods.add(m.getName().substring("script_".length()));
+            }
+        }
+    }
     
     static Pattern WORD_PATTERN = Pattern.compile("\\w+");
     
@@ -57,7 +66,7 @@ public class SyntaxHighlighter {
             else if (DEFAULT_VARS.contains(match)) {
                 color = defaultVarColor;
             }
-            else if (isScriptFunction(match)) {
+            else if (scriptMethods.contains(match)) {
                 color = functionColor;
             }
             
@@ -65,14 +74,5 @@ public class SyntaxHighlighter {
                 spannable.setSpan(new ForegroundColorSpan(color), matcher.start(), matcher.end(), 0);
             }
         }
-    }
-    
-    boolean isScriptFunction(String str) {
-        String target = "script_" + str;
-        for(Method m : scriptMethods) {
-            if (m.getName().equals(target)) return true;
-        }
-        return false;
-    }
-
+    }    
 }
