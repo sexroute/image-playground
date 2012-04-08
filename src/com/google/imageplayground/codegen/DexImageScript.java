@@ -44,6 +44,7 @@ import com.google.dexmaker.TypeId;
 import com.google.imageplayground.drawing.DrawCommand;
 import com.google.imageplayground.drawing.DrawOperation;
 import com.google.imageplayground.util.CameraUtils;
+import com.google.imageplayground.util.FaceFinder;
 
 public class DexImageScript {
     
@@ -173,6 +174,9 @@ public class DexImageScript {
 	int imageWidth;
 	int imageHeight;
 	
+	FaceFinder faceFinder = new FaceFinder();
+	int numFaces;
+	
 	List<Worker> workers;
 	ExecutorService workerExecutor;
 	
@@ -196,6 +200,7 @@ public class DexImageScript {
 		this.imageWidth = width;
 		this.imageHeight = height;
 		this.drawCommands.clear();
+		this.numFaces = -1;
 		
 		if (this.getScriptType()==ScriptType.MANUAL) {
 		    Arrays.fill(outputPixelBuffer, 255<<24); // solid black
@@ -491,6 +496,32 @@ public class DexImageScript {
         return list.remove(size-1);
     }
     
+    // face detection functions
+    int computeFaces() {
+        numFaces = faceFinder.findFacesInCameraData(this.imageData, this.imageWidth, this.imageHeight);
+        return numFaces;
+    }
+
+    public int script_numfaces() {
+        if (this.numFaces==-1) this.numFaces = computeFaces();
+        return this.numFaces;
+    }
+    
+    public int script_faceconfidence(int index) {
+        return faceFinder.getConfidence(index);
+    }
+    
+    public int script_facex(int index) {
+        return faceFinder.getMidpointX(index);
+    }
+    
+    public int script_facey(int index) {
+        return faceFinder.getMidpointY(index);
+    }
+    
+    public int script_facedist(int index) {
+        return faceFinder.getEyesDistance(index);
+    }
     
     // drawing functions
     int addDrawCommand(DrawOperation operation, Integer... args) {
@@ -525,8 +556,16 @@ public class DexImageScript {
     public int script_framecircle(int cx, int cy, int radius) {
         return addDrawCommand(DrawOperation.FRAME_CIRCLE, cx, cy, radius);
     }
+    
+    public int script_fillsquare(int midx, int midy, int radius) {
+        return addDrawCommand(DrawOperation.FILL_RECT, midx-radius, midy-radius, midx+radius, midy+radius);
+    }
 
-    public int script_drawnumber(int x, int y, int value) {
+    public int script_framesquare(int midx, int midy, int radius) {
+        return addDrawCommand(DrawOperation.FRAME_RECT, midx-radius, midy-radius, midx+radius, midy+radius);
+    }
+
+    public int script_drawint(int x, int y, int value) {
         return addDrawCommand(DrawOperation.DRAW_NUMBER, x, y, value);
     }
     
