@@ -19,14 +19,12 @@ package com.google.imageplayground.util;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.OutputStream;
-import java.lang.ref.SoftReference;
-import java.util.HashMap;
-import java.util.Map;
 
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.net.Uri;
+import android.support.v4.util.LruCache;
 
 /** This class implements a two-level cache for Bitmaps. The first level is an in-memory map
  * which uses SoftReferences so that the Bitmaps will be freed when necessary. The second
@@ -37,27 +35,30 @@ import android.net.Uri;
 
 public class ScaledBitmapCache {
     
+    static int MEMORY_CACHE_SIZE = 2*1024*1024;
+    
     public static interface ThumbnailLocator {
         File thumbnailFileForUri(Uri imageUri);
     }
     
     // Simple ThumbnailLocator for putting thumbnails into a single directory using the image URI's filename.
-    static class FixedDirectoryLocator implements ThumbnailLocator {
-        String thumbnailDirectory;
-        
-        public FixedDirectoryLocator(String thumbnailDirectory) {
-            this.thumbnailDirectory = thumbnailDirectory;
-        }
-        public File thumbnailFileForUri(Uri imageUri) {
-            String filename = imageUri.getLastPathSegment();
-            return new File(thumbnailDirectory + File.separator + filename);
-        }    
+    public static ThumbnailLocator createFixedDirectoryLocator(final String thumbnailDirectory) {
+        return new ThumbnailLocator() {
+            public File thumbnailFileForUri(Uri imageUri) {
+                String filename = imageUri.getLastPathSegment();
+                return new File(thumbnailDirectory + File.separator + filename);
+            }   
+        };
     }
-    
+
     Context context;
     ThumbnailLocator thumbnailLocator;
     
-    Map<Uri, SoftReference<Bitmap>> scaledBitmapCache = new HashMap<Uri, SoftReference<Bitmap>>();
+    LruCache<Uri, Bitmap> scaledBitmapCache = new LruCache<Uri, Bitmap>(MEMORY_CACHE_SIZE) {
+        @Override protected int sizeOf(Uri uri, Bitmap bitmap) {
+            return AndroidUtils.getBitmapByteCount(bitmap);
+        }
+    };
     
     public ScaledBitmapCache(Context context, ThumbnailLocator thumbnailLocator) {
         this.context = context;
@@ -65,14 +66,19 @@ public class ScaledBitmapCache {
     }
     
     public ScaledBitmapCache(Context context, String imageDirectory) {
-        this(context, new FixedDirectoryLocator(imageDirectory));
+        this(context, createFixedDirectoryLocator(imageDirectory));
+    }
+    
+    public Bitmap getInMemoryScaledBitmap(Uri imageUri, int minWidth, int minHeight) {
+        Bitmap bitmap = scaledBitmapCache.get(imageUri);
+        if (bitmap!=null && bitmap.getWidth()>=minWidth && bitmap.getHeight()>=minHeight) {
+            return bitmap;
+        }
+        return null;
     }
     
     public Bitmap getScaledBitmap(Uri imageUri, int minWidth, int minHeight) {
-        Bitmap bitmap = null;
-        // check in-memory cache
-        SoftReference<Bitmap> ref = scaledBitmapCache.get(imageUri);
-        bitmap = (ref!=null) ? ref.get() : null;
+        Bitmap bitmap = getInMemoryScaledBitmap(imageUri, minWidth, minHeight);
         if (bitmap!=null) return bitmap;
         
         // check thumbnail directory
@@ -82,7 +88,7 @@ public class ScaledBitmapCache {
                 bitmap = AndroidUtils.scaledBitmapFromURIWithMinimumSize(context, 
                         Uri.fromFile(thumbfile), minWidth, minHeight);
                 if (bitmap!=null && bitmap.getWidth()>=minWidth && bitmap.getHeight()>=minHeight) {
-                    scaledBitmapCache.put(imageUri, new SoftReference(bitmap));
+                    scaledBitmapCache.put(imageUri, bitmap);
                     return bitmap;
                 }
             }
@@ -98,13 +104,15 @@ public class ScaledBitmapCache {
         }
         if (bitmap!=null) {
             // write to in-memory map and save thumbnail image
-            scaledBitmapCache.put(imageUri, new SoftReference(bitmap));
+            scaledBitmapCache.put(imageUri, bitmap);
             try {
                 // create thumbnail directory if it doesn't exist
                 thumbfile.getParentFile().mkdirs();
                 OutputStream thumbnailOutputStream = new FileOutputStream(thumbfile);
                 bitmap.compress(CompressFormat.JPEG, 90, thumbnailOutputStream);
                 thumbnailOutputStream.close();
+                // create .noindex file so thumbnail pictures won't be indexed and show up in the gallery app
+                (new File(thumbfile.getParentFile().getPath() + File.separator + ".nomedia")).createNewFile();
             }
             catch(Exception ignored) {}
         }
@@ -115,5 +123,4 @@ public class ScaledBitmapCache {
         scaledBitmapCache.remove(imageUri);
         thumbnailLocator.thumbnailFileForUri(imageUri).delete();
     }
-
 }
