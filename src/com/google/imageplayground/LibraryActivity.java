@@ -98,15 +98,12 @@ public class LibraryActivity extends Activity {
 
         // look for foo.png in the foo directory
         imageMaps.clear();
-        for(File fileDir : files) {
-            if (fileDir.isDirectory()) {
-                File pngFile = new File(fileDir, fileDir.getName()+".png");
-                if (pngFile.isFile()) {
-                    Uri imageUri = Uri.fromFile(pngFile);
-                    Map dmap = new HashMap();
-                    dmap.put(IMAGE_URI_KEY, imageUri);
-                    imageMaps.add(dmap);
-                }
+        for(File file : files) {
+            if (file.isFile() && file.getName().endsWith(".png")) {
+                Uri imageUri = Uri.fromFile(file);
+                Map dmap = new HashMap();
+                dmap.put(IMAGE_URI_KEY, imageUri);
+                imageMaps.add(dmap);
             }
         }
     }

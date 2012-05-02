@@ -10,4 +10,12 @@
     <string name="deleteImageButtonLabel">Delete Picture</string>
     <string name="shareImageButtonLabel">Share Picture</string>
     <string name="exitViewImageButtonLabel">Return</string>
+    
+    <string name="saveScriptButtonLabel">Save</string>
+    <string name="cancelSaveScriptButtonLabel">Cancel</string>
+    
+    <string name="newScriptMenuItem">New Script</string>
+    <string name="saveScriptMenuItem">Save</string>
+    <string name="loadScriptMenuItem">Load</string>
+    
 </resources>

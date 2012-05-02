@@ -26,8 +26,11 @@ import java.util.regex.Pattern;
 import com.google.imageplayground.codegen.DexImageScript;
 
 import android.graphics.Color;
+import android.text.Editable;
 import android.text.Spannable;
+import android.text.TextWatcher;
 import android.text.style.ForegroundColorSpan;
+import android.widget.EditText;
 
 public class SyntaxHighlighter {
 
@@ -74,5 +77,17 @@ public class SyntaxHighlighter {
                 spannable.setSpan(new ForegroundColorSpan(color), matcher.start(), matcher.end(), 0);
             }
         }
-    }    
+    }
+    
+    public static void watchTextField(final EditText textField) {
+        final SyntaxHighlighter highlighter = new SyntaxHighlighter();
+        
+        textField.addTextChangedListener(new TextWatcher() {
+            @Override public void afterTextChanged(Editable s) {
+                highlighter.applySyntaxHighlighting(textField.getText());
+            }
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+        });
+    }
 }

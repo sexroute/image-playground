@@ -20,6 +20,7 @@ import java.io.FileNotFoundException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+import android.app.Activity;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -177,5 +178,18 @@ public class AndroidUtils {
         catch(Exception ex) {
             return 4 * bitmap.getWidth() * bitmap.getHeight();
         }
+    }
+    
+    /** Shows or hides the activity's ActionBar on API level 11 or higher. */
+    public static void setActionBarVisibility(Activity activity, boolean visible) {
+        try {
+            Method getBarMethod = Activity.class.getMethod("getActionBar");
+            Object actionBar = getBarMethod.invoke(activity);
+            if (actionBar!=null) {
+                Method showHideMethod = actionBar.getClass().getMethod((visible) ? "show" : "hide");
+                showHideMethod.invoke(actionBar);
+            }
+        }
+        catch(Exception ignored) {}
     }
 }

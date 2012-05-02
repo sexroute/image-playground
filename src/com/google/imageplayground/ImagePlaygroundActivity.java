@@ -24,6 +24,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import com.google.imageplayground.codegen.DexImageScript;
+import com.google.imageplayground.scripts.ScriptFile;
+import com.google.imageplayground.scripts.ScriptList;
 import com.google.imageplayground.util.ARManager;
 import com.google.imageplayground.util.AndroidUtils;
 import com.google.imageplayground.util.CameraUtils;
@@ -31,7 +33,9 @@ import com.google.imageplayground.util.ShutterButton;
 import com.google.imageplayground.util.ShutterButton.OnShutterButtonListener;
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -41,18 +45,22 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.preference.PreferenceManager;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.util.Log;
 import android.view.Display;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.SurfaceView;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.Toast;
 
 public class ImagePlaygroundActivity extends Activity implements Camera.PreviewCallback, OnShutterButtonListener {
+    static final int SCRIPT_LIST_ACTIVITY_CODE = 1;
+    
 	ARManager arManager;
 	
 	SurfaceView cameraView;
@@ -67,19 +75,21 @@ public class ImagePlaygroundActivity extends Activity implements Camera.PreviewC
 	int displayHeight;
 	
 	String userScript;
+	ScriptFile currentScriptFile;
 	
 	Handler handler = new Handler();
 	
     static DateFormat FILENAME_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd-HH-mm-ss");
-    static String BASE_PICTURE_DIR = Environment.getExternalStorageDirectory() + File.separator + "ImagePlayground";
+    static String BASE_DIR = Environment.getExternalStorageDirectory() + File.separator + "ImagePlayground";
+    static String BASE_PICTURE_DIR = BASE_DIR + File.separator + "images";
+    static String BASE_SCRIPT_DIR = BASE_DIR + File.separator + "scripts";
     
     static String thumbnailDirectory() {
-    	return BASE_PICTURE_DIR + File.separator + "thumbnails";
+    	return BASE_DIR + File.separator + "thumbnails";
     }
 
     /** Called when the activity is first created. */
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
+    @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
@@ -87,7 +97,7 @@ public class ImagePlaygroundActivity extends Activity implements Camera.PreviewC
         resultView = (ResultView)findViewById(R.id.resultView);
         cameraCheckbox = (CheckBox)findViewById(R.id.cameraCheckbox);
         scriptField = (EditText)findViewById(R.id.scriptText);
-        scriptField.addTextChangedListener(new SyntaxHighlighterTextWatcher(scriptField, new SyntaxHighlighter()));
+        SyntaxHighlighter.watchTextField(scriptField);
         
         fullScreenControls = findViewById(R.id.fullScreenControls);
         fullScreenResultView = (ResultView)findViewById(R.id.fullScreenResultView);
@@ -105,20 +115,18 @@ public class ImagePlaygroundActivity extends Activity implements Camera.PreviewC
         displayHeight = display.getHeight();
 
         arManager = ARManager.createAndSetupCameraView(this, cameraView, this);
-        arManager.setPreferredPreviewSize(displayWidth/2, displayHeight/2);
+        arManager.setPreferredPreviewSize(displayWidth/3, displayHeight/3);
         arManager.setNumberOfPreviewCallbackBuffers(1);
         
         updateFromPreferences();
     }
     
-    @Override
-    public void onPause() {
+    @Override public void onPause() {
     	arManager.stopCamera();
     	super.onPause();
     }
     
-    @Override
-    public void onResume() {
+    @Override public void onResume() {
     	super.onResume();
     	if (cameraCheckbox.isChecked()) {
     	    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
@@ -130,6 +138,39 @@ public class ImagePlaygroundActivity extends Activity implements Camera.PreviewC
                 arManager.startCameraIfVisible();
             }
     	}
+    }
+    
+    @Override protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        switch(requestCode) {
+            case SCRIPT_LIST_ACTIVITY_CODE:
+                if (resultCode==Activity.RESULT_OK) {
+                    Uri scriptUri = intent.getData();
+                    this.currentScriptFile = ScriptFile.loadFromDirectory(new File(scriptUri.getPath()));
+                    if (this.currentScriptFile!=null) {
+                        scriptField.setText(currentScriptFile.getScriptContent());
+                    }
+                }
+        }
+    }
+    
+    @Override public boolean onCreateOptionsMenu(Menu menu) {
+        this.getMenuInflater().inflate(R.menu.main_menu, menu);
+        return true;
+    }
+    
+    @Override public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_item_save:
+                saveScript();
+                return true;
+            case R.id.menu_item_new:
+                newScript();
+                return true;
+            case R.id.menu_item_load:
+                loadScript();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
     
     void updateFromPreferences() {
@@ -148,6 +189,15 @@ public class ImagePlaygroundActivity extends Activity implements Camera.PreviewC
         SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
         editor.putBoolean(SCRIPT_UNTESTED_PREF, value);
         editor.commit();
+    }
+    
+    // adjusts right LinearLayout to shrink preview and computed images so that they have a correct aspect ratio
+    void adjustLayoutForCameraPreviewSize(int previewWidth, int previewHeight) {
+        View rightLayout = findViewById(R.id.mainRightLayout);
+        int targetWidth = (rightLayout.getHeight()/2) * previewWidth / previewHeight;
+        if (targetWidth < rightLayout.getWidth()) {
+            rightLayout.setLayoutParams(new LinearLayout.LayoutParams(targetWidth, rightLayout.getHeight(), 0));
+        }
     }
     
     public void onClick_updateScript(View view) {
@@ -176,10 +226,57 @@ public class ImagePlaygroundActivity extends Activity implements Camera.PreviewC
         startActivity(intent);
     }
     
+    public void loadScript() {
+        Intent intent = ScriptListActivity.intentWithScriptDirectory(this, BASE_SCRIPT_DIR);
+        this.startActivityForResult(intent, SCRIPT_LIST_ACTIVITY_CODE);
+    }
+    
+    void saveScript() {
+        if (currentScriptFile!=null) {
+            currentScriptFile.saveScriptContent(scriptField.getText().toString());
+        }
+        else {
+            final EditText nameField = new EditText(this);
+            AlertDialog.Builder alert = new AlertDialog.Builder(this);
+            alert.setView(nameField);
+            alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
+                public void onClick(DialogInterface dialog, int which) {
+                    String scriptName = nameField.getText().toString();
+                    ScriptList scriptList = new ScriptList(BASE_SCRIPT_DIR);
+                    currentScriptFile = scriptList.createNewScriptFile(scriptName, scriptField.getText().toString());
+                    if (currentScriptFile!=null) {
+                        Toast.makeText(getApplicationContext(), "Saved", Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+                        Toast.makeText(getApplicationContext(), "Error saving", Toast.LENGTH_LONG).show();
+                    }
+                }
+            });
+            alert.setNegativeButton("Cancel", null);
+            alert.show();
+        }
+    }
+    
+    void newScript() {
+        if (currentScriptFile!=null) {
+            currentScriptFile.saveScriptContent(scriptField.getText().toString());
+        }
+        currentScriptFile = null;
+        scriptField.setText("");
+    }
+    
+    public void onClick_saveScript(View view) {
+        saveScript();
+    }
+    
+    public void onClick_newScript(View view) {
+        newScript();
+    }
+    
     void takePicture() {
         try {
             String datestr = FILENAME_DATE_FORMAT.format(new Date());
-            String dir = BASE_PICTURE_DIR + File.separator + datestr;
+            String dir = BASE_PICTURE_DIR;
             (new File(dir)).mkdirs();
             if (!((new File(dir)).isDirectory())) {
                 return;
@@ -228,6 +325,7 @@ public class ImagePlaygroundActivity extends Activity implements Camera.PreviewC
             arManager.startCameraIfVisible();
         }
         AndroidUtils.setSystemUiLowProfile(cameraView);
+        AndroidUtils.setActionBarVisibility(this, false);
 
         arManager.setPreferredPreviewSize(displayWidth, displayHeight);
         arManager.stopCamera();
@@ -239,6 +337,7 @@ public class ImagePlaygroundActivity extends Activity implements Camera.PreviewC
         resultView.updateBitmap(fullScreenResultView.getBitmap());
         fullScreenResultView.updateBitmap(null);
         AndroidUtils.setSystemUiVisible(cameraView);
+        AndroidUtils.setActionBarVisibility(this, true);
 
         arManager.setPreferredPreviewSize(displayWidth/2, displayHeight/2);
         arManager.stopCamera();
@@ -265,10 +364,14 @@ public class ImagePlaygroundActivity extends Activity implements Camera.PreviewC
     static final int REQUIRED_NEW_SCRIPT_FRAMES = 10;
     static final long NEW_SCRIPT_DEADLINE = 5000;
     static final String SCRIPT_UNTESTED_PREF = "scriptUntested";
+    boolean adjustedLayoutForCameraPreview = false;
 
-	@Override
-	public void onPreviewFrame(byte[] data, Camera camera) {
+	@Override public void onPreviewFrame(byte[] data, Camera camera) {
 		Camera.Size size = camera.getParameters().getPreviewSize();
+		if (!adjustedLayoutForCameraPreview) {
+		    adjustLayoutForCameraPreviewSize(size.width, size.height);
+		    adjustedLayoutForCameraPreview = true;
+		}
 		try {
 		    if (!isTextEditorExpanded()) {
 	            String userScript = scriptField.getText().toString();
@@ -305,19 +408,16 @@ public class ImagePlaygroundActivity extends Activity implements Camera.PreviewC
 		}
 	}
 
-	@Override
-	public void onShutterButtonFocus(boolean pressed) {
+	@Override public void onShutterButtonFocus(boolean pressed) {
 		shutterButton.setImageResource(pressed ? R.drawable.btn_camera_shutter_pressed_holo : 
 			                                     R.drawable.btn_camera_shutter_holo);
 	}
 
-	@Override
-	public void onShutterButtonClick() {
+	@Override public void onShutterButtonClick() {
 		takePicture();
 	}
 	
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
+    @Override public boolean onKeyDown(int keyCode, KeyEvent event) {
     	// take picture when pushing hardware camera button or trackball center
 		if ((keyCode==KeyEvent.KEYCODE_CAMERA || keyCode==KeyEvent.KEYCODE_DPAD_CENTER) && event.getRepeatCount()==0) {
 			if (isFullScreen()) {
@@ -337,23 +437,5 @@ public class ImagePlaygroundActivity extends Activity implements Camera.PreviewC
 			}
 		}
     	return super.onKeyDown(keyCode, event);
-    }
-    
-    class SyntaxHighlighterTextWatcher implements TextWatcher {
-        SyntaxHighlighter highlighter;
-        EditText editText;
-        
-        public SyntaxHighlighterTextWatcher(EditText editText, SyntaxHighlighter highlighter) {
-            this.editText = editText;
-            this.highlighter = highlighter;
-        }
-        
-        @Override
-        public void afterTextChanged(Editable s) {
-            this.highlighter.applySyntaxHighlighting(editText.getText());
-        }
-
-        @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
-        @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
-    }
+    }    
 }
