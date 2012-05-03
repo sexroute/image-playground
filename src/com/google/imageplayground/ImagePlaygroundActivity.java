@@ -123,6 +123,9 @@ public class ImagePlaygroundActivity extends Activity implements Camera.PreviewC
     
     @Override public void onPause() {
     	arManager.stopCamera();
+        if (currentScriptFile!=null) {
+            currentScriptFile.saveScriptContent(scriptField.getText().toString());
+        }
     	super.onPause();
     }
     
@@ -138,6 +141,7 @@ public class ImagePlaygroundActivity extends Activity implements Camera.PreviewC
                 arManager.startCameraIfVisible();
             }
     	}
+    	// TODO: save and restore currentScriptFile reference
     }
     
     @Override protected void onActivityResult(int requestCode, int resultCode, Intent intent) {

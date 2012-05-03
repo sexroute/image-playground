@@ -59,6 +59,9 @@ public class ScriptListActivity extends Activity {
         setContentView(R.layout.script_list);
         
         scriptTextView = (EditText)findViewById(R.id.scriptTextView);
+        // disable editing, not ideal because this also disables scrolling
+        scriptTextView.setFocusable(false);
+        scriptTextView.setEnabled(false);
         SyntaxHighlighter.watchTextField(scriptTextView);
         
         scriptListView = (ListView)findViewById(R.id.scriptListView);
