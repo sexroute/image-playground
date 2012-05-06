@@ -18,4 +18,7 @@
     <string name="saveScriptMenuItem">Save</string>
     <string name="loadScriptMenuItem">Load</string>
     
+    <string name="saveScriptMessage">Enter the script name</string>
+    <string name="untitledScript">Untitled Script</string>
+    
 </resources>

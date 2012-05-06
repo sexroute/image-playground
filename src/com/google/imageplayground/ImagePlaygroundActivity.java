@@ -56,6 +56,7 @@ import android.view.WindowManager;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class ImagePlaygroundActivity extends Activity implements Camera.PreviewCallback, OnShutterButtonListener {
@@ -74,6 +75,7 @@ public class ImagePlaygroundActivity extends Activity implements Camera.PreviewC
 	int displayWidth;
 	int displayHeight;
 	
+	static final String CURRENT_SCRIPT_PATH_PREF = "currentScriptPath";
 	String userScript;
 	ScriptFile currentScriptFile;
 	
@@ -123,16 +125,35 @@ public class ImagePlaygroundActivity extends Activity implements Camera.PreviewC
     
     @Override public void onPause() {
     	arManager.stopCamera();
+    	String scriptPath = null;
         if (currentScriptFile!=null) {
             currentScriptFile.saveScriptContent(scriptField.getText().toString());
+            scriptPath = currentScriptFile.getDirectoryPath();
         }
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putString(CURRENT_SCRIPT_PATH_PREF, scriptPath);
+        editor.commit();
+        
     	super.onPause();
     }
     
     @Override public void onResume() {
     	super.onResume();
+
+    	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+    	if (currentScriptFile==null) {
+    	    // restore pointer to current script if available
+    	    String scriptPath = prefs.getString(CURRENT_SCRIPT_PATH_PREF, null);
+    	    if (scriptPath!=null) {
+                this.currentScriptFile = ScriptFile.loadFromDirectory(new File(scriptPath));
+                if (this.currentScriptFile!=null) {
+                    scriptField.setText(currentScriptFile.getScriptContent());
+                }
+    	    }
+    	    updateScriptNameField();
+    	}
     	if (cameraCheckbox.isChecked()) {
-    	    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
             if (prefs.getBoolean(SCRIPT_UNTESTED_PREF, false)) {
                 // the script may have hung last time, so don't automatically start it running
                 cameraCheckbox.setChecked(false);
@@ -141,7 +162,6 @@ public class ImagePlaygroundActivity extends Activity implements Camera.PreviewC
                 arManager.startCameraIfVisible();
             }
     	}
-    	// TODO: save and restore currentScriptFile reference
     }
     
     @Override protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
@@ -153,6 +173,7 @@ public class ImagePlaygroundActivity extends Activity implements Camera.PreviewC
                     if (this.currentScriptFile!=null) {
                         scriptField.setText(currentScriptFile.getScriptContent());
                     }
+                    updateScriptNameField();
                 }
         }
     }
@@ -187,6 +208,12 @@ public class ImagePlaygroundActivity extends Activity implements Camera.PreviewC
     	SharedPreferences.Editor editor = PreferenceManager.getDefaultSharedPreferences(getBaseContext()).edit();
     	editor.putString("script", script);
     	editor.commit();
+    }
+    
+    void updateScriptNameField() {
+        TextView scriptNameField = (TextView)findViewById(R.id.scriptNameTextField);
+        String msg = (currentScriptFile!=null) ? currentScriptFile.getScriptName() : getString(R.string.untitledScript);
+        scriptNameField.setText(msg);
     }
     
     void updateScriptUntestedPref(boolean value) {
@@ -243,6 +270,7 @@ public class ImagePlaygroundActivity extends Activity implements Camera.PreviewC
             final EditText nameField = new EditText(this);
             AlertDialog.Builder alert = new AlertDialog.Builder(this);
             alert.setView(nameField);
+            alert.setMessage(getString(R.string.saveScriptMessage));
             alert.setPositiveButton("Save", new DialogInterface.OnClickListener() {
                 public void onClick(DialogInterface dialog, int which) {
                     String scriptName = nameField.getText().toString();
@@ -254,6 +282,7 @@ public class ImagePlaygroundActivity extends Activity implements Camera.PreviewC
                     else {
                         Toast.makeText(getApplicationContext(), "Error saving", Toast.LENGTH_LONG).show();
                     }
+                    updateScriptNameField();
                 }
             });
             alert.setNegativeButton("Cancel", null);
@@ -267,6 +296,7 @@ public class ImagePlaygroundActivity extends Activity implements Camera.PreviewC
         }
         currentScriptFile = null;
         scriptField.setText("");
+        updateScriptNameField();
     }
     
     public void onClick_saveScript(View view) {
