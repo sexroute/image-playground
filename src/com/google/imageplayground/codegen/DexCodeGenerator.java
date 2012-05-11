@@ -434,11 +434,27 @@ public class DexCodeGenerator {
             return "";
         }
         else if ("if".equals(token)) {
-            // jump to label past block if condition is false
-            String labelName = context.nextLabel();
-            generateInstructionsForBooleanExpression(tree.getChild(0), labelName, context);
-            generateInstructions(tree.getChild(1), context);
-            context.instructions.add(new LabelInstruction(labelName));
+            if (tree.getChildCount()==3) {
+                // if and else subtrees
+                String elseLabel = context.nextLabel();
+                String endLabel = context.nextLabel();
+                // jump to else label if condition is false
+                generateInstructionsForBooleanExpression(tree.getChild(0), elseLabel, context);
+                generateInstructions(tree.getChild(1), context);
+                // jump over else block to end
+                context.instructions.add(new JumpInstruction(endLabel));
+                // code for else block
+                context.instructions.add(new LabelInstruction(elseLabel));
+                generateInstructions(tree.getChild(2), context);
+                context.instructions.add(new LabelInstruction(endLabel));
+            }
+            else {
+                // no else, jump to label past block if condition is false
+                String endLabel = context.nextLabel();
+                generateInstructionsForBooleanExpression(tree.getChild(0), endLabel, context);
+                generateInstructions(tree.getChild(1), context);
+                context.instructions.add(new LabelInstruction(endLabel));
+            }
         }
         else if ("while".equals(token)) {
             // put label before test, if condition is false jump to exit, at end of loop jump to top

@@ -1,4 +1,4 @@
-// $ANTLR 3.4 ScriptGrammar.g 2012-04-07 16:24:23
+// $ANTLR 3.4 ScriptGrammar.g 2012-05-10 23:18:12
 
 package com.google.imageplayground.parser;
 
@@ -38,6 +38,7 @@ public class ScriptGrammarLexer extends Lexer {
     public static final int T__36=36;
     public static final int T__37=37;
     public static final int T__38=38;
+    public static final int T__39=39;
     public static final int BLOCK=4;
     public static final int CALL=5;
     public static final int ID=6;
@@ -480,10 +481,10 @@ public class ScriptGrammarLexer extends Lexer {
         try {
             int _type = T__31;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ScriptGrammar.g:25:7: ( 'for' )
-            // ScriptGrammar.g:25:9: 'for'
+            // ScriptGrammar.g:25:7: ( 'else' )
+            // ScriptGrammar.g:25:9: 'else'
             {
-            match("for"); 
+            match("else"); 
 
 
 
@@ -503,10 +504,10 @@ public class ScriptGrammarLexer extends Lexer {
         try {
             int _type = T__32;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ScriptGrammar.g:26:7: ( 'if' )
-            // ScriptGrammar.g:26:9: 'if'
+            // ScriptGrammar.g:26:7: ( 'for' )
+            // ScriptGrammar.g:26:9: 'for'
             {
-            match("if"); 
+            match("for"); 
 
 
 
@@ -526,10 +527,10 @@ public class ScriptGrammarLexer extends Lexer {
         try {
             int _type = T__33;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ScriptGrammar.g:27:7: ( 'return' )
-            // ScriptGrammar.g:27:9: 'return'
+            // ScriptGrammar.g:27:7: ( 'if' )
+            // ScriptGrammar.g:27:9: 'if'
             {
-            match("return"); 
+            match("if"); 
 
 
 
@@ -549,10 +550,10 @@ public class ScriptGrammarLexer extends Lexer {
         try {
             int _type = T__34;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ScriptGrammar.g:28:7: ( 'while' )
-            // ScriptGrammar.g:28:9: 'while'
+            // ScriptGrammar.g:28:7: ( 'return' )
+            // ScriptGrammar.g:28:9: 'return'
             {
-            match("while"); 
+            match("return"); 
 
 
 
@@ -572,10 +573,12 @@ public class ScriptGrammarLexer extends Lexer {
         try {
             int _type = T__35;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ScriptGrammar.g:29:7: ( '{' )
-            // ScriptGrammar.g:29:9: '{'
+            // ScriptGrammar.g:29:7: ( 'while' )
+            // ScriptGrammar.g:29:9: 'while'
             {
-            match('{'); 
+            match("while"); 
+
+
 
             }
 
@@ -593,10 +596,10 @@ public class ScriptGrammarLexer extends Lexer {
         try {
             int _type = T__36;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ScriptGrammar.g:30:7: ( '|' )
-            // ScriptGrammar.g:30:9: '|'
+            // ScriptGrammar.g:30:7: ( '{' )
+            // ScriptGrammar.g:30:9: '{'
             {
-            match('|'); 
+            match('{'); 
 
             }
 
@@ -614,10 +617,10 @@ public class ScriptGrammarLexer extends Lexer {
         try {
             int _type = T__37;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ScriptGrammar.g:31:7: ( '}' )
-            // ScriptGrammar.g:31:9: '}'
+            // ScriptGrammar.g:31:7: ( '|' )
+            // ScriptGrammar.g:31:9: '|'
             {
-            match('}'); 
+            match('|'); 
 
             }
 
@@ -635,10 +638,10 @@ public class ScriptGrammarLexer extends Lexer {
         try {
             int _type = T__38;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ScriptGrammar.g:32:7: ( '~' )
-            // ScriptGrammar.g:32:9: '~'
+            // ScriptGrammar.g:32:7: ( '}' )
+            // ScriptGrammar.g:32:9: '}'
             {
-            match('~'); 
+            match('}'); 
 
             }
 
@@ -651,15 +654,36 @@ public class ScriptGrammarLexer extends Lexer {
     }
     // $ANTLR end "T__38"
 
+    // $ANTLR start "T__39"
+    public final void mT__39() throws RecognitionException {
+        try {
+            int _type = T__39;
+            int _channel = DEFAULT_TOKEN_CHANNEL;
+            // ScriptGrammar.g:33:7: ( '~' )
+            // ScriptGrammar.g:33:9: '~'
+            {
+            match('~'); 
+
+            }
+
+            state.type = _type;
+            state.channel = _channel;
+        }
+        finally {
+        	// do for sure before leaving
+        }
+    }
+    // $ANTLR end "T__39"
+
     // $ANTLR start "TYPE"
     public final void mTYPE() throws RecognitionException {
         try {
             int _type = TYPE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ScriptGrammar.g:86:5: ( ( 'int' | 'long' | 'float' | 'double' | 'boolean' ) )
-            // ScriptGrammar.g:86:7: ( 'int' | 'long' | 'float' | 'double' | 'boolean' )
+            // ScriptGrammar.g:90:5: ( ( 'int' | 'long' | 'float' | 'double' | 'boolean' ) )
+            // ScriptGrammar.g:90:7: ( 'int' | 'long' | 'float' | 'double' | 'boolean' )
             {
-            // ScriptGrammar.g:86:7: ( 'int' | 'long' | 'float' | 'double' | 'boolean' )
+            // ScriptGrammar.g:90:7: ( 'int' | 'long' | 'float' | 'double' | 'boolean' )
             int alt1=5;
             switch ( input.LA(1) ) {
             case 'i':
@@ -697,7 +721,7 @@ public class ScriptGrammarLexer extends Lexer {
 
             switch (alt1) {
                 case 1 :
-                    // ScriptGrammar.g:86:8: 'int'
+                    // ScriptGrammar.g:90:8: 'int'
                     {
                     match("int"); 
 
@@ -706,7 +730,7 @@ public class ScriptGrammarLexer extends Lexer {
                     }
                     break;
                 case 2 :
-                    // ScriptGrammar.g:86:14: 'long'
+                    // ScriptGrammar.g:90:14: 'long'
                     {
                     match("long"); 
 
@@ -715,7 +739,7 @@ public class ScriptGrammarLexer extends Lexer {
                     }
                     break;
                 case 3 :
-                    // ScriptGrammar.g:86:21: 'float'
+                    // ScriptGrammar.g:90:21: 'float'
                     {
                     match("float"); 
 
@@ -724,7 +748,7 @@ public class ScriptGrammarLexer extends Lexer {
                     }
                     break;
                 case 4 :
-                    // ScriptGrammar.g:86:29: 'double'
+                    // ScriptGrammar.g:90:29: 'double'
                     {
                     match("double"); 
 
@@ -733,7 +757,7 @@ public class ScriptGrammarLexer extends Lexer {
                     }
                     break;
                 case 5 :
-                    // ScriptGrammar.g:86:38: 'boolean'
+                    // ScriptGrammar.g:90:38: 'boolean'
                     {
                     match("boolean"); 
 
@@ -761,8 +785,8 @@ public class ScriptGrammarLexer extends Lexer {
         try {
             int _type = ID;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ScriptGrammar.g:87:5: ( ( 'a' .. 'z' | 'A' .. 'Z' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' )* )
-            // ScriptGrammar.g:87:9: ( 'a' .. 'z' | 'A' .. 'Z' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' )*
+            // ScriptGrammar.g:91:5: ( ( 'a' .. 'z' | 'A' .. 'Z' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' )* )
+            // ScriptGrammar.g:91:9: ( 'a' .. 'z' | 'A' .. 'Z' ) ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' )*
             {
             if ( (input.LA(1) >= 'A' && input.LA(1) <= 'Z')||(input.LA(1) >= 'a' && input.LA(1) <= 'z') ) {
                 input.consume();
@@ -774,7 +798,7 @@ public class ScriptGrammarLexer extends Lexer {
             }
 
 
-            // ScriptGrammar.g:87:28: ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' )*
+            // ScriptGrammar.g:91:28: ( 'a' .. 'z' | 'A' .. 'Z' | '0' .. '9' )*
             loop2:
             do {
                 int alt2=2;
@@ -824,10 +848,10 @@ public class ScriptGrammarLexer extends Lexer {
         try {
             int _type = INT;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ScriptGrammar.g:88:5: ( ( '0' .. '9' )+ )
-            // ScriptGrammar.g:88:9: ( '0' .. '9' )+
+            // ScriptGrammar.g:92:5: ( ( '0' .. '9' )+ )
+            // ScriptGrammar.g:92:9: ( '0' .. '9' )+
             {
-            // ScriptGrammar.g:88:9: ( '0' .. '9' )+
+            // ScriptGrammar.g:92:9: ( '0' .. '9' )+
             int cnt3=0;
             loop3:
             do {
@@ -882,10 +906,10 @@ public class ScriptGrammarLexer extends Lexer {
         try {
             int _type = NEWLINE;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ScriptGrammar.g:89:8: ( ( '\\r' )? '\\n' )
-            // ScriptGrammar.g:89:9: ( '\\r' )? '\\n'
+            // ScriptGrammar.g:93:8: ( ( '\\r' )? '\\n' )
+            // ScriptGrammar.g:93:9: ( '\\r' )? '\\n'
             {
-            // ScriptGrammar.g:89:9: ( '\\r' )?
+            // ScriptGrammar.g:93:9: ( '\\r' )?
             int alt4=2;
             int LA4_0 = input.LA(1);
 
@@ -894,7 +918,7 @@ public class ScriptGrammarLexer extends Lexer {
             }
             switch (alt4) {
                 case 1 :
-                    // ScriptGrammar.g:89:9: '\\r'
+                    // ScriptGrammar.g:93:9: '\\r'
                     {
                     match('\r'); 
 
@@ -922,10 +946,10 @@ public class ScriptGrammarLexer extends Lexer {
         try {
             int _type = WS;
             int _channel = DEFAULT_TOKEN_CHANNEL;
-            // ScriptGrammar.g:90:5: ( ( ' ' | '\\t' )+ )
-            // ScriptGrammar.g:90:9: ( ' ' | '\\t' )+
+            // ScriptGrammar.g:94:5: ( ( ' ' | '\\t' )+ )
+            // ScriptGrammar.g:94:9: ( ' ' | '\\t' )+
             {
-            // ScriptGrammar.g:90:9: ( ' ' | '\\t' )+
+            // ScriptGrammar.g:94:9: ( ' ' | '\\t' )+
             int cnt5=0;
             loop5:
             do {
@@ -978,8 +1002,8 @@ public class ScriptGrammarLexer extends Lexer {
     // $ANTLR end "WS"
 
     public void mTokens() throws RecognitionException {
-        // ScriptGrammar.g:1:8: ( T__12 | T__13 | T__14 | T__15 | T__16 | T__17 | T__18 | T__19 | T__20 | T__21 | T__22 | T__23 | T__24 | T__25 | T__26 | T__27 | T__28 | T__29 | T__30 | T__31 | T__32 | T__33 | T__34 | T__35 | T__36 | T__37 | T__38 | TYPE | ID | INT | NEWLINE | WS )
-        int alt6=32;
+        // ScriptGrammar.g:1:8: ( T__12 | T__13 | T__14 | T__15 | T__16 | T__17 | T__18 | T__19 | T__20 | T__21 | T__22 | T__23 | T__24 | T__25 | T__26 | T__27 | T__28 | T__29 | T__30 | T__31 | T__32 | T__33 | T__34 | T__35 | T__36 | T__37 | T__38 | T__39 | TYPE | ID | INT | NEWLINE | WS )
+        int alt6=33;
         alt6 = dfa6.predict(input);
         switch (alt6) {
             case 1 :
@@ -1199,39 +1223,47 @@ public class ScriptGrammarLexer extends Lexer {
                 }
                 break;
             case 28 :
-                // ScriptGrammar.g:1:172: TYPE
+                // ScriptGrammar.g:1:172: T__39
+                {
+                mT__39(); 
+
+
+                }
+                break;
+            case 29 :
+                // ScriptGrammar.g:1:178: TYPE
                 {
                 mTYPE(); 
 
 
                 }
                 break;
-            case 29 :
-                // ScriptGrammar.g:1:177: ID
+            case 30 :
+                // ScriptGrammar.g:1:183: ID
                 {
                 mID(); 
 
 
                 }
                 break;
-            case 30 :
-                // ScriptGrammar.g:1:180: INT
+            case 31 :
+                // ScriptGrammar.g:1:186: INT
                 {
                 mINT(); 
 
 
                 }
                 break;
-            case 31 :
-                // ScriptGrammar.g:1:184: NEWLINE
+            case 32 :
+                // ScriptGrammar.g:1:190: NEWLINE
                 {
                 mNEWLINE(); 
 
 
                 }
                 break;
-            case 32 :
-                // ScriptGrammar.g:1:192: WS
+            case 33 :
+                // ScriptGrammar.g:1:198: WS
                 {
                 mWS(); 
 
@@ -1246,37 +1278,39 @@ public class ScriptGrammarLexer extends Lexer {
 
     protected DFA6 dfa6 = new DFA6(this);
     static final String DFA6_eotS =
-        "\13\uffff\1\37\1\41\1\44\4\31\4\uffff\3\31\4\uffff\1\57\7\uffff"+
-        "\2\31\1\62\6\31\2\uffff\1\71\1\31\1\uffff\1\73\5\31\1\uffff\1\31"+
-        "\1\uffff\2\31\1\73\2\31\1\73\1\31\1\107\2\31\1\112\1\uffff\1\73"+
-        "\1\31\1\uffff\1\73";
+        "\13\uffff\1\40\1\42\1\45\5\32\4\uffff\3\32\4\uffff\1\61\7\uffff"+
+        "\3\32\1\65\6\32\2\uffff\1\32\1\75\1\32\1\uffff\1\77\5\32\1\105\1"+
+        "\uffff\1\32\1\uffff\2\32\1\77\2\32\1\uffff\1\77\1\32\1\114\2\32"+
+        "\1\117\1\uffff\1\77\1\32\1\uffff\1\77";
     static final String DFA6_eofS =
-        "\114\uffff";
+        "\121\uffff";
     static final String DFA6_minS =
-        "\1\11\12\uffff\1\74\2\75\1\154\1\146\1\145\1\150\4\uffff\3\157\4"+
-        "\uffff\1\74\7\uffff\1\162\1\157\1\60\2\164\1\151\1\156\1\165\1\157"+
-        "\2\uffff\1\60\1\141\1\uffff\1\60\1\165\1\154\1\147\1\142\1\154\1"+
-        "\uffff\1\164\1\uffff\1\162\1\145\1\60\1\154\1\145\1\60\1\156\1\60"+
-        "\1\145\1\141\1\60\1\uffff\1\60\1\156\1\uffff\1\60";
+        "\1\11\12\uffff\1\74\2\75\2\154\1\146\1\145\1\150\4\uffff\3\157\4"+
+        "\uffff\1\74\7\uffff\1\163\1\162\1\157\1\60\2\164\1\151\1\156\1\165"+
+        "\1\157\2\uffff\1\145\1\60\1\141\1\uffff\1\60\1\165\1\154\1\147\1"+
+        "\142\1\154\1\60\1\uffff\1\164\1\uffff\1\162\1\145\1\60\1\154\1\145"+
+        "\1\uffff\1\60\1\156\1\60\1\145\1\141\1\60\1\uffff\1\60\1\156\1\uffff"+
+        "\1\60";
     static final String DFA6_maxS =
-        "\1\176\12\uffff\2\75\1\76\1\157\1\156\1\145\1\150\4\uffff\3\157"+
-        "\4\uffff\1\74\7\uffff\1\162\1\157\1\172\2\164\1\151\1\156\1\165"+
-        "\1\157\2\uffff\1\172\1\141\1\uffff\1\172\1\165\1\154\1\147\1\142"+
-        "\1\154\1\uffff\1\164\1\uffff\1\162\1\145\1\172\1\154\1\145\1\172"+
-        "\1\156\1\172\1\145\1\141\1\172\1\uffff\1\172\1\156\1\uffff\1\172";
+        "\1\176\12\uffff\2\75\1\76\1\154\1\157\1\156\1\145\1\150\4\uffff"+
+        "\3\157\4\uffff\1\74\7\uffff\1\163\1\162\1\157\1\172\2\164\1\151"+
+        "\1\156\1\165\1\157\2\uffff\1\145\1\172\1\141\1\uffff\1\172\1\165"+
+        "\1\154\1\147\1\142\1\154\1\172\1\uffff\1\164\1\uffff\1\162\1\145"+
+        "\1\172\1\154\1\145\1\uffff\1\172\1\156\1\172\1\145\1\141\1\172\1"+
+        "\uffff\1\172\1\156\1\uffff\1\172";
     static final String DFA6_acceptS =
-        "\1\uffff\1\1\1\2\1\3\1\4\1\5\1\6\1\7\1\10\1\11\1\12\7\uffff\1\30"+
-        "\1\31\1\32\1\33\3\uffff\1\35\1\36\1\37\1\40\1\uffff\1\16\1\13\1"+
-        "\20\1\17\1\22\1\23\1\21\11\uffff\1\15\1\14\2\uffff\1\25\6\uffff"+
-        "\1\24\1\uffff\1\34\13\uffff\1\27\2\uffff\1\26\1\uffff";
+        "\1\uffff\1\1\1\2\1\3\1\4\1\5\1\6\1\7\1\10\1\11\1\12\10\uffff\1\31"+
+        "\1\32\1\33\1\34\3\uffff\1\36\1\37\1\40\1\41\1\uffff\1\16\1\13\1"+
+        "\20\1\17\1\22\1\23\1\21\12\uffff\1\15\1\14\3\uffff\1\26\7\uffff"+
+        "\1\25\1\uffff\1\35\5\uffff\1\24\6\uffff\1\30\2\uffff\1\27\1\uffff";
     static final String DFA6_specialS =
-        "\114\uffff}>";
+        "\121\uffff}>";
     static final String[] DFA6_transitionS = {
-            "\1\34\1\33\2\uffff\1\33\22\uffff\1\34\1\1\3\uffff\1\2\1\3\1"+
-            "\uffff\1\4\1\5\1\6\1\7\1\10\1\11\1\uffff\1\12\12\32\2\uffff"+
-            "\1\13\1\14\1\15\2\uffff\32\31\6\uffff\1\31\1\30\1\31\1\27\1"+
-            "\31\1\16\2\31\1\17\2\31\1\26\5\31\1\20\4\31\1\21\3\31\1\22\1"+
-            "\23\1\24\1\25",
+            "\1\35\1\34\2\uffff\1\34\22\uffff\1\35\1\1\3\uffff\1\2\1\3\1"+
+            "\uffff\1\4\1\5\1\6\1\7\1\10\1\11\1\uffff\1\12\12\33\2\uffff"+
+            "\1\13\1\14\1\15\2\uffff\32\32\6\uffff\1\32\1\31\1\32\1\30\1"+
+            "\16\1\17\2\32\1\20\2\32\1\27\5\32\1\21\4\32\1\22\3\32\1\23\1"+
+            "\24\1\25\1\26",
             "",
             "",
             "",
@@ -1287,71 +1321,76 @@ public class ScriptGrammarLexer extends Lexer {
             "",
             "",
             "",
-            "\1\35\1\36",
-            "\1\40",
-            "\1\42\1\43",
-            "\1\46\2\uffff\1\45",
-            "\1\47\7\uffff\1\50",
-            "\1\51",
-            "\1\52",
-            "",
-            "",
-            "",
-            "",
+            "\1\36\1\37",
+            "\1\41",
+            "\1\43\1\44",
+            "\1\46",
+            "\1\50\2\uffff\1\47",
+            "\1\51\7\uffff\1\52",
             "\1\53",
             "\1\54",
+            "",
+            "",
+            "",
+            "",
             "\1\55",
-            "",
-            "",
-            "",
-            "",
             "\1\56",
-            "",
-            "",
-            "",
+            "\1\57",
             "",
             "",
             "",
             "",
             "\1\60",
-            "\1\61",
-            "\12\31\7\uffff\32\31\6\uffff\32\31",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "",
+            "\1\62",
             "\1\63",
             "\1\64",
-            "\1\65",
+            "\12\32\7\uffff\32\32\6\uffff\32\32",
             "\1\66",
             "\1\67",
             "\1\70",
-            "",
-            "",
-            "\12\31\7\uffff\32\31\6\uffff\32\31",
+            "\1\71",
             "\1\72",
+            "\1\73",
             "",
-            "\12\31\7\uffff\32\31\6\uffff\32\31",
+            "",
             "\1\74",
-            "\1\75",
+            "\12\32\7\uffff\32\32\6\uffff\32\32",
             "\1\76",
-            "\1\77",
+            "",
+            "\12\32\7\uffff\32\32\6\uffff\32\32",
             "\1\100",
-            "",
             "\1\101",
-            "",
             "\1\102",
             "\1\103",
-            "\12\31\7\uffff\32\31\6\uffff\32\31",
             "\1\104",
-            "\1\105",
-            "\12\31\7\uffff\32\31\6\uffff\32\31",
+            "\12\32\7\uffff\32\32\6\uffff\32\32",
+            "",
             "\1\106",
-            "\12\31\7\uffff\32\31\6\uffff\32\31",
+            "",
+            "\1\107",
             "\1\110",
+            "\12\32\7\uffff\32\32\6\uffff\32\32",
             "\1\111",
-            "\12\31\7\uffff\32\31\6\uffff\32\31",
+            "\1\112",
             "",
-            "\12\31\7\uffff\32\31\6\uffff\32\31",
+            "\12\32\7\uffff\32\32\6\uffff\32\32",
             "\1\113",
+            "\12\32\7\uffff\32\32\6\uffff\32\32",
+            "\1\115",
+            "\1\116",
+            "\12\32\7\uffff\32\32\6\uffff\32\32",
             "",
-            "\12\31\7\uffff\32\31\6\uffff\32\31"
+            "\12\32\7\uffff\32\32\6\uffff\32\32",
+            "\1\120",
+            "",
+            "\12\32\7\uffff\32\32\6\uffff\32\32"
     };
 
     static final short[] DFA6_eot = DFA.unpackEncodedString(DFA6_eotS);
@@ -1384,7 +1423,7 @@ public class ScriptGrammarLexer extends Lexer {
             this.transition = DFA6_transition;
         }
         public String getDescription() {
-            return "1:1: Tokens : ( T__12 | T__13 | T__14 | T__15 | T__16 | T__17 | T__18 | T__19 | T__20 | T__21 | T__22 | T__23 | T__24 | T__25 | T__26 | T__27 | T__28 | T__29 | T__30 | T__31 | T__32 | T__33 | T__34 | T__35 | T__36 | T__37 | T__38 | TYPE | ID | INT | NEWLINE | WS );";
+            return "1:1: Tokens : ( T__12 | T__13 | T__14 | T__15 | T__16 | T__17 | T__18 | T__19 | T__20 | T__21 | T__22 | T__23 | T__24 | T__25 | T__26 | T__27 | T__28 | T__29 | T__30 | T__31 | T__32 | T__33 | T__34 | T__35 | T__36 | T__37 | T__38 | T__39 | TYPE | ID | INT | NEWLINE | WS );";
         }
     }
  

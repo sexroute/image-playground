@@ -65,7 +65,11 @@ atom:   INT
 funcall: ID '(' expr? (',' expr)* ')' -> ^(CALL ID expr*)
     ;
 
-ifexp:  'if' '('? boolexp ')'? block -> ^('if' boolexp block)
+ifexp:  (ifelseexp) => ifelseexp
+    |    'if' '('? boolexp ')'? block -> ^('if' boolexp block)
+    ;
+    
+ifelseexp: 'if' '('? boolexp ')'? block NEWLINE? 'else' block -> ^('if' boolexp block*)
     ;
     
 whileexp:  'while' '('? boolexp ')'? block -> ^('while' boolexp block)

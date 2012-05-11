@@ -1,4 +1,4 @@
-// $ANTLR 3.4 ScriptGrammar.g 2012-04-07 16:24:23
+// $ANTLR 3.4 ScriptGrammar.g 2012-05-10 23:18:12
 
 package com.google.imageplayground.parser;
 
@@ -7,6 +7,8 @@ import org.antlr.runtime.*;
 import java.util.Stack;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.HashMap;
 
 import org.antlr.runtime.tree.*;
 
@@ -14,7 +16,7 @@ import org.antlr.runtime.tree.*;
 @SuppressWarnings({"all", "warnings", "unchecked"})
 public class ScriptGrammarParser extends Parser {
     public static final String[] tokenNames = new String[] {
-        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "BLOCK", "CALL", "ID", "INT", "NEG", "NEWLINE", "TYPE", "WS", "'!='", "'%'", "'&'", "'('", "')'", "'*'", "'+'", "','", "'-'", "'/'", "'<'", "'<<'", "'<<<'", "'<='", "'='", "'=='", "'>'", "'>='", "'>>'", "'for'", "'if'", "'return'", "'while'", "'{'", "'|'", "'}'", "'~'"
+        "<invalid>", "<EOR>", "<DOWN>", "<UP>", "BLOCK", "CALL", "ID", "INT", "NEG", "NEWLINE", "TYPE", "WS", "'!='", "'%'", "'&'", "'('", "')'", "'*'", "'+'", "','", "'-'", "'/'", "'<'", "'<<'", "'<<<'", "'<='", "'='", "'=='", "'>'", "'>='", "'>>'", "'else'", "'for'", "'if'", "'return'", "'while'", "'{'", "'|'", "'}'", "'~'"
     };
 
     public static final int EOF=-1;
@@ -45,6 +47,7 @@ public class ScriptGrammarParser extends Parser {
     public static final int T__36=36;
     public static final int T__37=37;
     public static final int T__38=38;
+    public static final int T__39=39;
     public static final int BLOCK=4;
     public static final int CALL=5;
     public static final int ID=6;
@@ -114,7 +117,7 @@ public TreeAdaptor getTreeAdaptor() {
                 int alt1=2;
                 int LA1_0 = input.LA(1);
 
-                if ( ((LA1_0 >= ID && LA1_0 <= INT)||(LA1_0 >= NEWLINE && LA1_0 <= TYPE)||LA1_0==15||LA1_0==20||(LA1_0 >= 31 && LA1_0 <= 35)||LA1_0==38) ) {
+                if ( ((LA1_0 >= ID && LA1_0 <= INT)||(LA1_0 >= NEWLINE && LA1_0 <= TYPE)||LA1_0==15||LA1_0==20||(LA1_0 >= 32 && LA1_0 <= 36)||LA1_0==39) ) {
                     alt1=1;
                 }
 
@@ -127,14 +130,15 @@ public TreeAdaptor getTreeAdaptor() {
             	    block1=block();
 
             	    state._fsp--;
-
-            	    adaptor.addChild(root_0, block1.getTree());
+            	    if (state.failed) return retval;
+            	    if ( state.backtracking==0 ) adaptor.addChild(root_0, block1.getTree());
 
             	    }
             	    break;
 
             	default :
             	    if ( cnt1 >= 1 ) break loop1;
+            	    if (state.backtracking>0) {state.failed=true; return retval;}
                         EarlyExitException eee =
                             new EarlyExitException(1, input);
                         throw eee;
@@ -148,9 +152,11 @@ public TreeAdaptor getTreeAdaptor() {
             retval.stop = input.LT(-1);
 
 
+            if ( state.backtracking==0 ) {
+
             retval.tree = (CommonTree)adaptor.rulePostProcessing(root_0);
             adaptor.setTokenBoundaries(retval.tree, retval.start, retval.stop);
-
+            }
         }
         catch (RecognitionException re) {
             reportError(re);
@@ -194,21 +200,22 @@ public TreeAdaptor getTreeAdaptor() {
         CommonTree NEWLINE3_tree=null;
         CommonTree char_literal5_tree=null;
         RewriteRuleTokenStream stream_NEWLINE=new RewriteRuleTokenStream(adaptor,"token NEWLINE");
-        RewriteRuleTokenStream stream_35=new RewriteRuleTokenStream(adaptor,"token 35");
-        RewriteRuleTokenStream stream_37=new RewriteRuleTokenStream(adaptor,"token 37");
+        RewriteRuleTokenStream stream_36=new RewriteRuleTokenStream(adaptor,"token 36");
+        RewriteRuleTokenStream stream_38=new RewriteRuleTokenStream(adaptor,"token 38");
         RewriteRuleSubtreeStream stream_block=new RewriteRuleSubtreeStream(adaptor,"rule block");
         try {
             // ScriptGrammar.g:26:6: ( '{' NEWLINE ( block )* '}' -> ^( BLOCK ( block )* ) | stat )
             int alt3=2;
             int LA3_0 = input.LA(1);
 
-            if ( (LA3_0==35) ) {
+            if ( (LA3_0==36) ) {
                 alt3=1;
             }
-            else if ( ((LA3_0 >= ID && LA3_0 <= INT)||(LA3_0 >= NEWLINE && LA3_0 <= TYPE)||LA3_0==15||LA3_0==20||(LA3_0 >= 31 && LA3_0 <= 34)||LA3_0==38) ) {
+            else if ( ((LA3_0 >= ID && LA3_0 <= INT)||(LA3_0 >= NEWLINE && LA3_0 <= TYPE)||LA3_0==15||LA3_0==20||(LA3_0 >= 32 && LA3_0 <= 35)||LA3_0==39) ) {
                 alt3=2;
             }
             else {
+                if (state.backtracking>0) {state.failed=true; return retval;}
                 NoViableAltException nvae =
                     new NoViableAltException("", 3, 0, input);
 
@@ -219,12 +226,12 @@ public TreeAdaptor getTreeAdaptor() {
                 case 1 :
                     // ScriptGrammar.g:26:8: '{' NEWLINE ( block )* '}'
                     {
-                    char_literal2=(Token)match(input,35,FOLLOW_35_in_block101);  
-                    stream_35.add(char_literal2);
+                    char_literal2=(Token)match(input,36,FOLLOW_36_in_block101); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_36.add(char_literal2);
 
 
-                    NEWLINE3=(Token)match(input,NEWLINE,FOLLOW_NEWLINE_in_block103);  
-                    stream_NEWLINE.add(NEWLINE3);
+                    NEWLINE3=(Token)match(input,NEWLINE,FOLLOW_NEWLINE_in_block103); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_NEWLINE.add(NEWLINE3);
 
 
                     // ScriptGrammar.g:26:20: ( block )*
@@ -233,7 +240,7 @@ public TreeAdaptor getTreeAdaptor() {
                         int alt2=2;
                         int LA2_0 = input.LA(1);
 
-                        if ( ((LA2_0 >= ID && LA2_0 <= INT)||(LA2_0 >= NEWLINE && LA2_0 <= TYPE)||LA2_0==15||LA2_0==20||(LA2_0 >= 31 && LA2_0 <= 35)||LA2_0==38) ) {
+                        if ( ((LA2_0 >= ID && LA2_0 <= INT)||(LA2_0 >= NEWLINE && LA2_0 <= TYPE)||LA2_0==15||LA2_0==20||(LA2_0 >= 32 && LA2_0 <= 36)||LA2_0==39) ) {
                             alt2=1;
                         }
 
@@ -246,8 +253,8 @@ public TreeAdaptor getTreeAdaptor() {
                     	    block4=block();
 
                     	    state._fsp--;
-
-                    	    stream_block.add(block4.getTree());
+                    	    if (state.failed) return retval;
+                    	    if ( state.backtracking==0 ) stream_block.add(block4.getTree());
 
                     	    }
                     	    break;
@@ -258,8 +265,8 @@ public TreeAdaptor getTreeAdaptor() {
                     } while (true);
 
 
-                    char_literal5=(Token)match(input,37,FOLLOW_37_in_block108);  
-                    stream_37.add(char_literal5);
+                    char_literal5=(Token)match(input,38,FOLLOW_38_in_block108); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_38.add(char_literal5);
 
 
                     // AST REWRITE
@@ -269,6 +276,8 @@ public TreeAdaptor getTreeAdaptor() {
                     // token list labels: 
                     // rule list labels: 
                     // wildcard labels: 
+                    if ( state.backtracking==0 ) {
+
                     retval.tree = root_0;
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
@@ -296,6 +305,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
                     retval.tree = root_0;
+                    }
 
                     }
                     break;
@@ -309,8 +319,8 @@ public TreeAdaptor getTreeAdaptor() {
                     stat6=stat();
 
                     state._fsp--;
-
-                    adaptor.addChild(root_0, stat6.getTree());
+                    if (state.failed) return retval;
+                    if ( state.backtracking==0 ) adaptor.addChild(root_0, stat6.getTree());
 
                     }
                     break;
@@ -319,9 +329,11 @@ public TreeAdaptor getTreeAdaptor() {
             retval.stop = input.LT(-1);
 
 
+            if ( state.backtracking==0 ) {
+
             retval.tree = (CommonTree)adaptor.rulePostProcessing(root_0);
             adaptor.setTokenBoundaries(retval.tree, retval.start, retval.stop);
-
+            }
         }
         catch (RecognitionException re) {
             reportError(re);
@@ -385,7 +397,7 @@ public TreeAdaptor getTreeAdaptor() {
             case INT:
             case 15:
             case 20:
-            case 38:
+            case 39:
                 {
                 alt4=1;
                 }
@@ -394,13 +406,14 @@ public TreeAdaptor getTreeAdaptor() {
                 {
                 int LA4_2 = input.LA(2);
 
-                if ( (LA4_2==NEWLINE||(LA4_2 >= 13 && LA4_2 <= 15)||(LA4_2 >= 17 && LA4_2 <= 18)||(LA4_2 >= 20 && LA4_2 <= 21)||(LA4_2 >= 23 && LA4_2 <= 24)||LA4_2==30||LA4_2==36) ) {
+                if ( (LA4_2==NEWLINE||(LA4_2 >= 13 && LA4_2 <= 15)||(LA4_2 >= 17 && LA4_2 <= 18)||(LA4_2 >= 20 && LA4_2 <= 21)||(LA4_2 >= 23 && LA4_2 <= 24)||LA4_2==30||LA4_2==37) ) {
                     alt4=1;
                 }
                 else if ( (LA4_2==26) ) {
                     alt4=3;
                 }
                 else {
+                    if (state.backtracking>0) {state.failed=true; return retval;}
                     NoViableAltException nvae =
                         new NoViableAltException("", 4, 2, input);
 
@@ -414,22 +427,22 @@ public TreeAdaptor getTreeAdaptor() {
                 alt4=2;
                 }
                 break;
-            case 33:
+            case 34:
                 {
                 alt4=4;
                 }
                 break;
-            case 32:
+            case 33:
                 {
                 alt4=5;
                 }
                 break;
-            case 34:
+            case 35:
                 {
                 alt4=6;
                 }
                 break;
-            case 31:
+            case 32:
                 {
                 alt4=7;
                 }
@@ -440,6 +453,7 @@ public TreeAdaptor getTreeAdaptor() {
                 }
                 break;
             default:
+                if (state.backtracking>0) {state.failed=true; return retval;}
                 NoViableAltException nvae =
                     new NoViableAltException("", 4, 0, input);
 
@@ -455,11 +469,11 @@ public TreeAdaptor getTreeAdaptor() {
                     expr7=expr();
 
                     state._fsp--;
+                    if (state.failed) return retval;
+                    if ( state.backtracking==0 ) stream_expr.add(expr7.getTree());
 
-                    stream_expr.add(expr7.getTree());
-
-                    NEWLINE8=(Token)match(input,NEWLINE,FOLLOW_NEWLINE_in_stat142);  
-                    stream_NEWLINE.add(NEWLINE8);
+                    NEWLINE8=(Token)match(input,NEWLINE,FOLLOW_NEWLINE_in_stat142); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_NEWLINE.add(NEWLINE8);
 
 
                     // AST REWRITE
@@ -469,6 +483,8 @@ public TreeAdaptor getTreeAdaptor() {
                     // token list labels: 
                     // rule list labels: 
                     // wildcard labels: 
+                    if ( state.backtracking==0 ) {
+
                     retval.tree = root_0;
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
@@ -481,22 +497,23 @@ public TreeAdaptor getTreeAdaptor() {
 
 
                     retval.tree = root_0;
+                    }
 
                     }
                     break;
                 case 2 :
                     // ScriptGrammar.g:31:9: TYPE assign
                     {
-                    TYPE9=(Token)match(input,TYPE,FOLLOW_TYPE_in_stat163);  
-                    stream_TYPE.add(TYPE9);
+                    TYPE9=(Token)match(input,TYPE,FOLLOW_TYPE_in_stat163); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_TYPE.add(TYPE9);
 
 
                     pushFollow(FOLLOW_assign_in_stat165);
                     assign10=assign();
 
                     state._fsp--;
-
-                    stream_assign.add(assign10.getTree());
+                    if (state.failed) return retval;
+                    if ( state.backtracking==0 ) stream_assign.add(assign10.getTree());
 
                     // AST REWRITE
                     // elements: TYPE, assign
@@ -505,6 +522,8 @@ public TreeAdaptor getTreeAdaptor() {
                     // token list labels: 
                     // rule list labels: 
                     // wildcard labels: 
+                    if ( state.backtracking==0 ) {
+
                     retval.tree = root_0;
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
@@ -527,6 +546,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
                     retval.tree = root_0;
+                    }
 
                     }
                     break;
@@ -540,8 +560,8 @@ public TreeAdaptor getTreeAdaptor() {
                     assign11=assign();
 
                     state._fsp--;
-
-                    adaptor.addChild(root_0, assign11.getTree());
+                    if (state.failed) return retval;
+                    if ( state.backtracking==0 ) adaptor.addChild(root_0, assign11.getTree());
 
                     }
                     break;
@@ -555,8 +575,8 @@ public TreeAdaptor getTreeAdaptor() {
                     retexp12=retexp();
 
                     state._fsp--;
-
-                    adaptor.addChild(root_0, retexp12.getTree());
+                    if (state.failed) return retval;
+                    if ( state.backtracking==0 ) adaptor.addChild(root_0, retexp12.getTree());
 
                     }
                     break;
@@ -570,8 +590,8 @@ public TreeAdaptor getTreeAdaptor() {
                     ifexp13=ifexp();
 
                     state._fsp--;
-
-                    adaptor.addChild(root_0, ifexp13.getTree());
+                    if (state.failed) return retval;
+                    if ( state.backtracking==0 ) adaptor.addChild(root_0, ifexp13.getTree());
 
                     }
                     break;
@@ -585,8 +605,8 @@ public TreeAdaptor getTreeAdaptor() {
                     whileexp14=whileexp();
 
                     state._fsp--;
-
-                    adaptor.addChild(root_0, whileexp14.getTree());
+                    if (state.failed) return retval;
+                    if ( state.backtracking==0 ) adaptor.addChild(root_0, whileexp14.getTree());
 
                     }
                     break;
@@ -600,16 +620,16 @@ public TreeAdaptor getTreeAdaptor() {
                     forexp15=forexp();
 
                     state._fsp--;
-
-                    adaptor.addChild(root_0, forexp15.getTree());
+                    if (state.failed) return retval;
+                    if ( state.backtracking==0 ) adaptor.addChild(root_0, forexp15.getTree());
 
                     }
                     break;
                 case 8 :
                     // ScriptGrammar.g:37:9: NEWLINE
                     {
-                    NEWLINE16=(Token)match(input,NEWLINE,FOLLOW_NEWLINE_in_stat233);  
-                    stream_NEWLINE.add(NEWLINE16);
+                    NEWLINE16=(Token)match(input,NEWLINE,FOLLOW_NEWLINE_in_stat233); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_NEWLINE.add(NEWLINE16);
 
 
                     // AST REWRITE
@@ -619,6 +639,8 @@ public TreeAdaptor getTreeAdaptor() {
                     // token list labels: 
                     // rule list labels: 
                     // wildcard labels: 
+                    if ( state.backtracking==0 ) {
+
                     retval.tree = root_0;
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
@@ -630,6 +652,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
                     retval.tree = root_0;
+                    }
 
                     }
                     break;
@@ -638,9 +661,11 @@ public TreeAdaptor getTreeAdaptor() {
             retval.stop = input.LT(-1);
 
 
+            if ( state.backtracking==0 ) {
+
             retval.tree = (CommonTree)adaptor.rulePostProcessing(root_0);
             adaptor.setTokenBoundaries(retval.tree, retval.start, retval.stop);
-
+            }
         }
         catch (RecognitionException re) {
             reportError(re);
@@ -689,32 +714,34 @@ public TreeAdaptor getTreeAdaptor() {
             // ScriptGrammar.g:40:7: ( ID '=' expr NEWLINE -> ^( '=' ID expr ) )
             // ScriptGrammar.g:40:9: ID '=' expr NEWLINE
             {
-            ID17=(Token)match(input,ID,FOLLOW_ID_in_assign263);  
-            stream_ID.add(ID17);
+            ID17=(Token)match(input,ID,FOLLOW_ID_in_assign263); if (state.failed) return retval; 
+            if ( state.backtracking==0 ) stream_ID.add(ID17);
 
 
-            char_literal18=(Token)match(input,26,FOLLOW_26_in_assign265);  
-            stream_26.add(char_literal18);
+            char_literal18=(Token)match(input,26,FOLLOW_26_in_assign265); if (state.failed) return retval; 
+            if ( state.backtracking==0 ) stream_26.add(char_literal18);
 
 
             pushFollow(FOLLOW_expr_in_assign267);
             expr19=expr();
 
             state._fsp--;
+            if (state.failed) return retval;
+            if ( state.backtracking==0 ) stream_expr.add(expr19.getTree());
 
-            stream_expr.add(expr19.getTree());
-
-            NEWLINE20=(Token)match(input,NEWLINE,FOLLOW_NEWLINE_in_assign269);  
-            stream_NEWLINE.add(NEWLINE20);
+            NEWLINE20=(Token)match(input,NEWLINE,FOLLOW_NEWLINE_in_assign269); if (state.failed) return retval; 
+            if ( state.backtracking==0 ) stream_NEWLINE.add(NEWLINE20);
 
 
             // AST REWRITE
-            // elements: expr, 26, ID
+            // elements: expr, ID, 26
             // token labels: 
             // rule labels: retval
             // token list labels: 
             // rule list labels: 
             // wildcard labels: 
+            if ( state.backtracking==0 ) {
+
             retval.tree = root_0;
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
@@ -741,15 +768,18 @@ public TreeAdaptor getTreeAdaptor() {
 
 
             retval.tree = root_0;
+            }
 
             }
 
             retval.stop = input.LT(-1);
 
 
+            if ( state.backtracking==0 ) {
+
             retval.tree = (CommonTree)adaptor.rulePostProcessing(root_0);
             adaptor.setTokenBoundaries(retval.tree, retval.start, retval.stop);
-
+            }
         }
         catch (RecognitionException re) {
             reportError(re);
@@ -789,34 +819,36 @@ public TreeAdaptor getTreeAdaptor() {
         CommonTree string_literal21_tree=null;
         CommonTree NEWLINE23_tree=null;
         RewriteRuleTokenStream stream_NEWLINE=new RewriteRuleTokenStream(adaptor,"token NEWLINE");
-        RewriteRuleTokenStream stream_33=new RewriteRuleTokenStream(adaptor,"token 33");
+        RewriteRuleTokenStream stream_34=new RewriteRuleTokenStream(adaptor,"token 34");
         RewriteRuleSubtreeStream stream_expr=new RewriteRuleSubtreeStream(adaptor,"rule expr");
         try {
             // ScriptGrammar.g:43:7: ( 'return' expr NEWLINE -> ^( 'return' expr ) )
             // ScriptGrammar.g:43:9: 'return' expr NEWLINE
             {
-            string_literal21=(Token)match(input,33,FOLLOW_33_in_retexp295);  
-            stream_33.add(string_literal21);
+            string_literal21=(Token)match(input,34,FOLLOW_34_in_retexp295); if (state.failed) return retval; 
+            if ( state.backtracking==0 ) stream_34.add(string_literal21);
 
 
             pushFollow(FOLLOW_expr_in_retexp297);
             expr22=expr();
 
             state._fsp--;
+            if (state.failed) return retval;
+            if ( state.backtracking==0 ) stream_expr.add(expr22.getTree());
 
-            stream_expr.add(expr22.getTree());
-
-            NEWLINE23=(Token)match(input,NEWLINE,FOLLOW_NEWLINE_in_retexp299);  
-            stream_NEWLINE.add(NEWLINE23);
+            NEWLINE23=(Token)match(input,NEWLINE,FOLLOW_NEWLINE_in_retexp299); if (state.failed) return retval; 
+            if ( state.backtracking==0 ) stream_NEWLINE.add(NEWLINE23);
 
 
             // AST REWRITE
-            // elements: 33, expr
+            // elements: expr, 34
             // token labels: 
             // rule labels: retval
             // token list labels: 
             // rule list labels: 
             // wildcard labels: 
+            if ( state.backtracking==0 ) {
+
             retval.tree = root_0;
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
@@ -827,7 +859,7 @@ public TreeAdaptor getTreeAdaptor() {
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot(
-                stream_33.nextNode()
+                stream_34.nextNode()
                 , root_1);
 
                 adaptor.addChild(root_1, stream_expr.nextTree());
@@ -839,15 +871,18 @@ public TreeAdaptor getTreeAdaptor() {
 
 
             retval.tree = root_0;
+            }
 
             }
 
             retval.stop = input.LT(-1);
 
 
+            if ( state.backtracking==0 ) {
+
             retval.tree = (CommonTree)adaptor.rulePostProcessing(root_0);
             adaptor.setTokenBoundaries(retval.tree, retval.start, retval.stop);
-
+            }
         }
         catch (RecognitionException re) {
             reportError(re);
@@ -910,8 +945,8 @@ public TreeAdaptor getTreeAdaptor() {
             multExpr24=multExpr();
 
             state._fsp--;
-
-            adaptor.addChild(root_0, multExpr24.getTree());
+            if (state.failed) return retval;
+            if ( state.backtracking==0 ) adaptor.addChild(root_0, multExpr24.getTree());
 
             // ScriptGrammar.g:46:18: ( ( '+' ^| '-' ^| '&' ^| '|' ^| '>>' ^| '<<' ^| '<<<' ^) multExpr )*
             loop6:
@@ -919,7 +954,7 @@ public TreeAdaptor getTreeAdaptor() {
                 int alt6=2;
                 int LA6_0 = input.LA(1);
 
-                if ( (LA6_0==14||LA6_0==18||LA6_0==20||(LA6_0 >= 23 && LA6_0 <= 24)||LA6_0==30||LA6_0==36) ) {
+                if ( (LA6_0==14||LA6_0==18||LA6_0==20||(LA6_0 >= 23 && LA6_0 <= 24)||LA6_0==30||LA6_0==37) ) {
                     alt6=1;
                 }
 
@@ -946,7 +981,7 @@ public TreeAdaptor getTreeAdaptor() {
             	        alt5=3;
             	        }
             	        break;
-            	    case 36:
+            	    case 37:
             	        {
             	        alt5=4;
             	        }
@@ -967,6 +1002,7 @@ public TreeAdaptor getTreeAdaptor() {
             	        }
             	        break;
             	    default:
+            	        if (state.backtracking>0) {state.failed=true; return retval;}
             	        NoViableAltException nvae =
             	            new NoViableAltException("", 5, 0, input);
 
@@ -978,84 +1014,91 @@ public TreeAdaptor getTreeAdaptor() {
             	        case 1 :
             	            // ScriptGrammar.g:46:20: '+' ^
             	            {
-            	            char_literal25=(Token)match(input,18,FOLLOW_18_in_expr329); 
+            	            char_literal25=(Token)match(input,18,FOLLOW_18_in_expr329); if (state.failed) return retval;
+            	            if ( state.backtracking==0 ) {
             	            char_literal25_tree = 
             	            (CommonTree)adaptor.create(char_literal25)
             	            ;
             	            root_0 = (CommonTree)adaptor.becomeRoot(char_literal25_tree, root_0);
-
+            	            }
 
             	            }
             	            break;
             	        case 2 :
             	            // ScriptGrammar.g:46:25: '-' ^
             	            {
-            	            char_literal26=(Token)match(input,20,FOLLOW_20_in_expr332); 
+            	            char_literal26=(Token)match(input,20,FOLLOW_20_in_expr332); if (state.failed) return retval;
+            	            if ( state.backtracking==0 ) {
             	            char_literal26_tree = 
             	            (CommonTree)adaptor.create(char_literal26)
             	            ;
             	            root_0 = (CommonTree)adaptor.becomeRoot(char_literal26_tree, root_0);
-
+            	            }
 
             	            }
             	            break;
             	        case 3 :
             	            // ScriptGrammar.g:46:30: '&' ^
             	            {
-            	            char_literal27=(Token)match(input,14,FOLLOW_14_in_expr335); 
+            	            char_literal27=(Token)match(input,14,FOLLOW_14_in_expr335); if (state.failed) return retval;
+            	            if ( state.backtracking==0 ) {
             	            char_literal27_tree = 
             	            (CommonTree)adaptor.create(char_literal27)
             	            ;
             	            root_0 = (CommonTree)adaptor.becomeRoot(char_literal27_tree, root_0);
-
+            	            }
 
             	            }
             	            break;
             	        case 4 :
             	            // ScriptGrammar.g:46:35: '|' ^
             	            {
-            	            char_literal28=(Token)match(input,36,FOLLOW_36_in_expr338); 
+            	            char_literal28=(Token)match(input,37,FOLLOW_37_in_expr338); if (state.failed) return retval;
+            	            if ( state.backtracking==0 ) {
             	            char_literal28_tree = 
             	            (CommonTree)adaptor.create(char_literal28)
             	            ;
             	            root_0 = (CommonTree)adaptor.becomeRoot(char_literal28_tree, root_0);
-
+            	            }
 
             	            }
             	            break;
             	        case 5 :
             	            // ScriptGrammar.g:46:40: '>>' ^
             	            {
-            	            string_literal29=(Token)match(input,30,FOLLOW_30_in_expr341); 
+            	            string_literal29=(Token)match(input,30,FOLLOW_30_in_expr341); if (state.failed) return retval;
+            	            if ( state.backtracking==0 ) {
             	            string_literal29_tree = 
             	            (CommonTree)adaptor.create(string_literal29)
             	            ;
             	            root_0 = (CommonTree)adaptor.becomeRoot(string_literal29_tree, root_0);
-
+            	            }
 
             	            }
             	            break;
             	        case 6 :
             	            // ScriptGrammar.g:46:46: '<<' ^
             	            {
-            	            string_literal30=(Token)match(input,23,FOLLOW_23_in_expr344); 
+            	            string_literal30=(Token)match(input,23,FOLLOW_23_in_expr344); if (state.failed) return retval;
+            	            if ( state.backtracking==0 ) {
             	            string_literal30_tree = 
             	            (CommonTree)adaptor.create(string_literal30)
             	            ;
             	            root_0 = (CommonTree)adaptor.becomeRoot(string_literal30_tree, root_0);
-
+            	            }
 
             	            }
             	            break;
             	        case 7 :
             	            // ScriptGrammar.g:46:52: '<<<' ^
             	            {
-            	            string_literal31=(Token)match(input,24,FOLLOW_24_in_expr347); 
+            	            string_literal31=(Token)match(input,24,FOLLOW_24_in_expr347); if (state.failed) return retval;
+            	            if ( state.backtracking==0 ) {
             	            string_literal31_tree = 
             	            (CommonTree)adaptor.create(string_literal31)
             	            ;
             	            root_0 = (CommonTree)adaptor.becomeRoot(string_literal31_tree, root_0);
-
+            	            }
 
             	            }
             	            break;
@@ -1067,8 +1110,8 @@ public TreeAdaptor getTreeAdaptor() {
             	    multExpr32=multExpr();
 
             	    state._fsp--;
-
-            	    adaptor.addChild(root_0, multExpr32.getTree());
+            	    if (state.failed) return retval;
+            	    if ( state.backtracking==0 ) adaptor.addChild(root_0, multExpr32.getTree());
 
             	    }
             	    break;
@@ -1084,9 +1127,11 @@ public TreeAdaptor getTreeAdaptor() {
             retval.stop = input.LT(-1);
 
 
+            if ( state.backtracking==0 ) {
+
             retval.tree = (CommonTree)adaptor.rulePostProcessing(root_0);
             adaptor.setTokenBoundaries(retval.tree, retval.start, retval.stop);
-
+            }
         }
         catch (RecognitionException re) {
             reportError(re);
@@ -1141,8 +1186,8 @@ public TreeAdaptor getTreeAdaptor() {
             unaryExp33=unaryExp();
 
             state._fsp--;
-
-            adaptor.addChild(root_0, unaryExp33.getTree());
+            if (state.failed) return retval;
+            if ( state.backtracking==0 ) adaptor.addChild(root_0, unaryExp33.getTree());
 
             // ScriptGrammar.g:50:18: ( ( '*' ^| '/' ^| '%' ^) unaryExp )*
             loop8:
@@ -1178,6 +1223,7 @@ public TreeAdaptor getTreeAdaptor() {
             	        }
             	        break;
             	    default:
+            	        if (state.backtracking>0) {state.failed=true; return retval;}
             	        NoViableAltException nvae =
             	            new NoViableAltException("", 7, 0, input);
 
@@ -1189,36 +1235,39 @@ public TreeAdaptor getTreeAdaptor() {
             	        case 1 :
             	            // ScriptGrammar.g:50:20: '*' ^
             	            {
-            	            char_literal34=(Token)match(input,17,FOLLOW_17_in_multExpr377); 
+            	            char_literal34=(Token)match(input,17,FOLLOW_17_in_multExpr377); if (state.failed) return retval;
+            	            if ( state.backtracking==0 ) {
             	            char_literal34_tree = 
             	            (CommonTree)adaptor.create(char_literal34)
             	            ;
             	            root_0 = (CommonTree)adaptor.becomeRoot(char_literal34_tree, root_0);
-
+            	            }
 
             	            }
             	            break;
             	        case 2 :
             	            // ScriptGrammar.g:50:25: '/' ^
             	            {
-            	            char_literal35=(Token)match(input,21,FOLLOW_21_in_multExpr380); 
+            	            char_literal35=(Token)match(input,21,FOLLOW_21_in_multExpr380); if (state.failed) return retval;
+            	            if ( state.backtracking==0 ) {
             	            char_literal35_tree = 
             	            (CommonTree)adaptor.create(char_literal35)
             	            ;
             	            root_0 = (CommonTree)adaptor.becomeRoot(char_literal35_tree, root_0);
-
+            	            }
 
             	            }
             	            break;
             	        case 3 :
             	            // ScriptGrammar.g:50:30: '%' ^
             	            {
-            	            char_literal36=(Token)match(input,13,FOLLOW_13_in_multExpr383); 
+            	            char_literal36=(Token)match(input,13,FOLLOW_13_in_multExpr383); if (state.failed) return retval;
+            	            if ( state.backtracking==0 ) {
             	            char_literal36_tree = 
             	            (CommonTree)adaptor.create(char_literal36)
             	            ;
             	            root_0 = (CommonTree)adaptor.becomeRoot(char_literal36_tree, root_0);
-
+            	            }
 
             	            }
             	            break;
@@ -1230,8 +1279,8 @@ public TreeAdaptor getTreeAdaptor() {
             	    unaryExp37=unaryExp();
 
             	    state._fsp--;
-
-            	    adaptor.addChild(root_0, unaryExp37.getTree());
+            	    if (state.failed) return retval;
+            	    if ( state.backtracking==0 ) adaptor.addChild(root_0, unaryExp37.getTree());
 
             	    }
             	    break;
@@ -1247,9 +1296,11 @@ public TreeAdaptor getTreeAdaptor() {
             retval.stop = input.LT(-1);
 
 
+            if ( state.backtracking==0 ) {
+
             retval.tree = (CommonTree)adaptor.rulePostProcessing(root_0);
             adaptor.setTokenBoundaries(retval.tree, retval.start, retval.stop);
-
+            }
         }
         catch (RecognitionException re) {
             reportError(re);
@@ -1293,7 +1344,7 @@ public TreeAdaptor getTreeAdaptor() {
         CommonTree char_literal38_tree=null;
         CommonTree char_literal40_tree=null;
         RewriteRuleTokenStream stream_20=new RewriteRuleTokenStream(adaptor,"token 20");
-        RewriteRuleTokenStream stream_38=new RewriteRuleTokenStream(adaptor,"token 38");
+        RewriteRuleTokenStream stream_39=new RewriteRuleTokenStream(adaptor,"token 39");
         RewriteRuleSubtreeStream stream_atom=new RewriteRuleSubtreeStream(adaptor,"rule atom");
         try {
             // ScriptGrammar.g:54:5: ( '-' atom -> ^( NEG atom ) | '~' atom -> ^( '~' atom ) | atom )
@@ -1304,7 +1355,7 @@ public TreeAdaptor getTreeAdaptor() {
                 alt9=1;
                 }
                 break;
-            case 38:
+            case 39:
                 {
                 alt9=2;
                 }
@@ -1317,6 +1368,7 @@ public TreeAdaptor getTreeAdaptor() {
                 }
                 break;
             default:
+                if (state.backtracking>0) {state.failed=true; return retval;}
                 NoViableAltException nvae =
                     new NoViableAltException("", 9, 0, input);
 
@@ -1328,16 +1380,16 @@ public TreeAdaptor getTreeAdaptor() {
                 case 1 :
                     // ScriptGrammar.g:54:9: '-' atom
                     {
-                    char_literal38=(Token)match(input,20,FOLLOW_20_in_unaryExp413);  
-                    stream_20.add(char_literal38);
+                    char_literal38=(Token)match(input,20,FOLLOW_20_in_unaryExp413); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_20.add(char_literal38);
 
 
                     pushFollow(FOLLOW_atom_in_unaryExp415);
                     atom39=atom();
 
                     state._fsp--;
-
-                    stream_atom.add(atom39.getTree());
+                    if (state.failed) return retval;
+                    if ( state.backtracking==0 ) stream_atom.add(atom39.getTree());
 
                     // AST REWRITE
                     // elements: atom
@@ -1346,6 +1398,8 @@ public TreeAdaptor getTreeAdaptor() {
                     // token list labels: 
                     // rule list labels: 
                     // wildcard labels: 
+                    if ( state.backtracking==0 ) {
+
                     retval.tree = root_0;
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
@@ -1368,30 +1422,33 @@ public TreeAdaptor getTreeAdaptor() {
 
 
                     retval.tree = root_0;
+                    }
 
                     }
                     break;
                 case 2 :
                     // ScriptGrammar.g:55:9: '~' atom
                     {
-                    char_literal40=(Token)match(input,38,FOLLOW_38_in_unaryExp433);  
-                    stream_38.add(char_literal40);
+                    char_literal40=(Token)match(input,39,FOLLOW_39_in_unaryExp433); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_39.add(char_literal40);
 
 
                     pushFollow(FOLLOW_atom_in_unaryExp435);
                     atom41=atom();
 
                     state._fsp--;
-
-                    stream_atom.add(atom41.getTree());
+                    if (state.failed) return retval;
+                    if ( state.backtracking==0 ) stream_atom.add(atom41.getTree());
 
                     // AST REWRITE
-                    // elements: 38, atom
+                    // elements: atom, 39
                     // token labels: 
                     // rule labels: retval
                     // token list labels: 
                     // rule list labels: 
                     // wildcard labels: 
+                    if ( state.backtracking==0 ) {
+
                     retval.tree = root_0;
                     RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
@@ -1402,7 +1459,7 @@ public TreeAdaptor getTreeAdaptor() {
                         {
                         CommonTree root_1 = (CommonTree)adaptor.nil();
                         root_1 = (CommonTree)adaptor.becomeRoot(
-                        stream_38.nextNode()
+                        stream_39.nextNode()
                         , root_1);
 
                         adaptor.addChild(root_1, stream_atom.nextTree());
@@ -1414,6 +1471,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
                     retval.tree = root_0;
+                    }
 
                     }
                     break;
@@ -1427,8 +1485,8 @@ public TreeAdaptor getTreeAdaptor() {
                     atom42=atom();
 
                     state._fsp--;
-
-                    adaptor.addChild(root_0, atom42.getTree());
+                    if (state.failed) return retval;
+                    if ( state.backtracking==0 ) adaptor.addChild(root_0, atom42.getTree());
 
                     }
                     break;
@@ -1437,9 +1495,11 @@ public TreeAdaptor getTreeAdaptor() {
             retval.stop = input.LT(-1);
 
 
+            if ( state.backtracking==0 ) {
+
             retval.tree = (CommonTree)adaptor.rulePostProcessing(root_0);
             adaptor.setTokenBoundaries(retval.tree, retval.start, retval.stop);
-
+            }
         }
         catch (RecognitionException re) {
             reportError(re);
@@ -1501,10 +1561,11 @@ public TreeAdaptor getTreeAdaptor() {
                 if ( (LA10_2==15) ) {
                     alt10=4;
                 }
-                else if ( (LA10_2==NEWLINE||(LA10_2 >= 13 && LA10_2 <= 14)||(LA10_2 >= 16 && LA10_2 <= 21)||(LA10_2 >= 23 && LA10_2 <= 24)||LA10_2==30||LA10_2==36) ) {
+                else if ( (LA10_2==NEWLINE||(LA10_2 >= 13 && LA10_2 <= 14)||(LA10_2 >= 16 && LA10_2 <= 21)||(LA10_2 >= 23 && LA10_2 <= 24)||LA10_2==30||LA10_2==37) ) {
                     alt10=2;
                 }
                 else {
+                    if (state.backtracking>0) {state.failed=true; return retval;}
                     NoViableAltException nvae =
                         new NoViableAltException("", 10, 2, input);
 
@@ -1519,6 +1580,7 @@ public TreeAdaptor getTreeAdaptor() {
                 }
                 break;
             default:
+                if (state.backtracking>0) {state.failed=true; return retval;}
                 NoViableAltException nvae =
                     new NoViableAltException("", 10, 0, input);
 
@@ -1533,12 +1595,13 @@ public TreeAdaptor getTreeAdaptor() {
                     root_0 = (CommonTree)adaptor.nil();
 
 
-                    INT43=(Token)match(input,INT,FOLLOW_INT_in_atom471); 
+                    INT43=(Token)match(input,INT,FOLLOW_INT_in_atom471); if (state.failed) return retval;
+                    if ( state.backtracking==0 ) {
                     INT43_tree = 
                     (CommonTree)adaptor.create(INT43)
                     ;
                     adaptor.addChild(root_0, INT43_tree);
-
+                    }
 
                     }
                     break;
@@ -1548,12 +1611,13 @@ public TreeAdaptor getTreeAdaptor() {
                     root_0 = (CommonTree)adaptor.nil();
 
 
-                    ID44=(Token)match(input,ID,FOLLOW_ID_in_atom482); 
+                    ID44=(Token)match(input,ID,FOLLOW_ID_in_atom482); if (state.failed) return retval;
+                    if ( state.backtracking==0 ) {
                     ID44_tree = 
                     (CommonTree)adaptor.create(ID44)
                     ;
                     adaptor.addChild(root_0, ID44_tree);
-
+                    }
 
                     }
                     break;
@@ -1563,16 +1627,16 @@ public TreeAdaptor getTreeAdaptor() {
                     root_0 = (CommonTree)adaptor.nil();
 
 
-                    char_literal45=(Token)match(input,15,FOLLOW_15_in_atom492); 
+                    char_literal45=(Token)match(input,15,FOLLOW_15_in_atom492); if (state.failed) return retval;
 
                     pushFollow(FOLLOW_expr_in_atom495);
                     expr46=expr();
 
                     state._fsp--;
+                    if (state.failed) return retval;
+                    if ( state.backtracking==0 ) adaptor.addChild(root_0, expr46.getTree());
 
-                    adaptor.addChild(root_0, expr46.getTree());
-
-                    char_literal47=(Token)match(input,16,FOLLOW_16_in_atom497); 
+                    char_literal47=(Token)match(input,16,FOLLOW_16_in_atom497); if (state.failed) return retval;
 
                     }
                     break;
@@ -1586,8 +1650,8 @@ public TreeAdaptor getTreeAdaptor() {
                     funcall48=funcall();
 
                     state._fsp--;
-
-                    adaptor.addChild(root_0, funcall48.getTree());
+                    if (state.failed) return retval;
+                    if ( state.backtracking==0 ) adaptor.addChild(root_0, funcall48.getTree());
 
                     }
                     break;
@@ -1596,9 +1660,11 @@ public TreeAdaptor getTreeAdaptor() {
             retval.stop = input.LT(-1);
 
 
+            if ( state.backtracking==0 ) {
+
             retval.tree = (CommonTree)adaptor.rulePostProcessing(root_0);
             adaptor.setTokenBoundaries(retval.tree, retval.start, retval.stop);
-
+            }
         }
         catch (RecognitionException re) {
             reportError(re);
@@ -1652,19 +1718,19 @@ public TreeAdaptor getTreeAdaptor() {
             // ScriptGrammar.g:65:8: ( ID '(' ( expr )? ( ',' expr )* ')' -> ^( CALL ID ( expr )* ) )
             // ScriptGrammar.g:65:10: ID '(' ( expr )? ( ',' expr )* ')'
             {
-            ID49=(Token)match(input,ID,FOLLOW_ID_in_funcall520);  
-            stream_ID.add(ID49);
+            ID49=(Token)match(input,ID,FOLLOW_ID_in_funcall520); if (state.failed) return retval; 
+            if ( state.backtracking==0 ) stream_ID.add(ID49);
 
 
-            char_literal50=(Token)match(input,15,FOLLOW_15_in_funcall522);  
-            stream_15.add(char_literal50);
+            char_literal50=(Token)match(input,15,FOLLOW_15_in_funcall522); if (state.failed) return retval; 
+            if ( state.backtracking==0 ) stream_15.add(char_literal50);
 
 
             // ScriptGrammar.g:65:17: ( expr )?
             int alt11=2;
             int LA11_0 = input.LA(1);
 
-            if ( ((LA11_0 >= ID && LA11_0 <= INT)||LA11_0==15||LA11_0==20||LA11_0==38) ) {
+            if ( ((LA11_0 >= ID && LA11_0 <= INT)||LA11_0==15||LA11_0==20||LA11_0==39) ) {
                 alt11=1;
             }
             switch (alt11) {
@@ -1675,8 +1741,8 @@ public TreeAdaptor getTreeAdaptor() {
                     expr51=expr();
 
                     state._fsp--;
-
-                    stream_expr.add(expr51.getTree());
+                    if (state.failed) return retval;
+                    if ( state.backtracking==0 ) stream_expr.add(expr51.getTree());
 
                     }
                     break;
@@ -1699,16 +1765,16 @@ public TreeAdaptor getTreeAdaptor() {
             	case 1 :
             	    // ScriptGrammar.g:65:24: ',' expr
             	    {
-            	    char_literal52=(Token)match(input,19,FOLLOW_19_in_funcall528);  
-            	    stream_19.add(char_literal52);
+            	    char_literal52=(Token)match(input,19,FOLLOW_19_in_funcall528); if (state.failed) return retval; 
+            	    if ( state.backtracking==0 ) stream_19.add(char_literal52);
 
 
             	    pushFollow(FOLLOW_expr_in_funcall530);
             	    expr53=expr();
 
             	    state._fsp--;
-
-            	    stream_expr.add(expr53.getTree());
+            	    if (state.failed) return retval;
+            	    if ( state.backtracking==0 ) stream_expr.add(expr53.getTree());
 
             	    }
             	    break;
@@ -1719,8 +1785,8 @@ public TreeAdaptor getTreeAdaptor() {
             } while (true);
 
 
-            char_literal54=(Token)match(input,16,FOLLOW_16_in_funcall534);  
-            stream_16.add(char_literal54);
+            char_literal54=(Token)match(input,16,FOLLOW_16_in_funcall534); if (state.failed) return retval; 
+            if ( state.backtracking==0 ) stream_16.add(char_literal54);
 
 
             // AST REWRITE
@@ -1730,6 +1796,8 @@ public TreeAdaptor getTreeAdaptor() {
             // token list labels: 
             // rule list labels: 
             // wildcard labels: 
+            if ( state.backtracking==0 ) {
+
             retval.tree = root_0;
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
@@ -1761,15 +1829,18 @@ public TreeAdaptor getTreeAdaptor() {
 
 
             retval.tree = root_0;
+            }
 
             }
 
             retval.stop = input.LT(-1);
 
 
+            if ( state.backtracking==0 ) {
+
             retval.tree = (CommonTree)adaptor.rulePostProcessing(root_0);
             adaptor.setTokenBoundaries(retval.tree, retval.start, retval.stop);
-
+            }
         }
         catch (RecognitionException re) {
             reportError(re);
@@ -1793,7 +1864,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "ifexp"
-    // ScriptGrammar.g:68:1: ifexp : 'if' ( '(' )? boolexp ( ')' )? block -> ^( 'if' boolexp block ) ;
+    // ScriptGrammar.g:68:1: ifexp : ( ( ifelseexp )=> ifelseexp | 'if' ( '(' )? boolexp ( ')' )? block -> ^( 'if' boolexp block ) );
     public final ScriptGrammarParser.ifexp_return ifexp() throws RecognitionException {
         ScriptGrammarParser.ifexp_return retval = new ScriptGrammarParser.ifexp_return();
         retval.start = input.LT(1);
@@ -1801,126 +1872,181 @@ public TreeAdaptor getTreeAdaptor() {
 
         CommonTree root_0 = null;
 
-        Token string_literal55=null;
-        Token char_literal56=null;
-        Token char_literal58=null;
-        ScriptGrammarParser.boolexp_return boolexp57 =null;
+        Token string_literal56=null;
+        Token char_literal57=null;
+        Token char_literal59=null;
+        ScriptGrammarParser.ifelseexp_return ifelseexp55 =null;
 
-        ScriptGrammarParser.block_return block59 =null;
+        ScriptGrammarParser.boolexp_return boolexp58 =null;
+
+        ScriptGrammarParser.block_return block60 =null;
 
 
-        CommonTree string_literal55_tree=null;
-        CommonTree char_literal56_tree=null;
-        CommonTree char_literal58_tree=null;
-        RewriteRuleTokenStream stream_32=new RewriteRuleTokenStream(adaptor,"token 32");
+        CommonTree string_literal56_tree=null;
+        CommonTree char_literal57_tree=null;
+        CommonTree char_literal59_tree=null;
         RewriteRuleTokenStream stream_15=new RewriteRuleTokenStream(adaptor,"token 15");
+        RewriteRuleTokenStream stream_33=new RewriteRuleTokenStream(adaptor,"token 33");
         RewriteRuleTokenStream stream_16=new RewriteRuleTokenStream(adaptor,"token 16");
         RewriteRuleSubtreeStream stream_boolexp=new RewriteRuleSubtreeStream(adaptor,"rule boolexp");
         RewriteRuleSubtreeStream stream_block=new RewriteRuleSubtreeStream(adaptor,"rule block");
         try {
-            // ScriptGrammar.g:68:6: ( 'if' ( '(' )? boolexp ( ')' )? block -> ^( 'if' boolexp block ) )
-            // ScriptGrammar.g:68:9: 'if' ( '(' )? boolexp ( ')' )? block
-            {
-            string_literal55=(Token)match(input,32,FOLLOW_32_in_ifexp558);  
-            stream_32.add(string_literal55);
+            // ScriptGrammar.g:68:6: ( ( ifelseexp )=> ifelseexp | 'if' ( '(' )? boolexp ( ')' )? block -> ^( 'if' boolexp block ) )
+            int alt15=2;
+            int LA15_0 = input.LA(1);
 
+            if ( (LA15_0==33) ) {
+                int LA15_1 = input.LA(2);
 
-            // ScriptGrammar.g:68:14: ( '(' )?
-            int alt13=2;
-            int LA13_0 = input.LA(1);
-
-            if ( (LA13_0==15) ) {
-                alt13=1;
-            }
-            switch (alt13) {
-                case 1 :
-                    // ScriptGrammar.g:68:14: '('
-                    {
-                    char_literal56=(Token)match(input,15,FOLLOW_15_in_ifexp560);  
-                    stream_15.add(char_literal56);
-
-
-                    }
-                    break;
-
-            }
-
-
-            pushFollow(FOLLOW_boolexp_in_ifexp563);
-            boolexp57=boolexp();
-
-            state._fsp--;
-
-            stream_boolexp.add(boolexp57.getTree());
-
-            // ScriptGrammar.g:68:27: ( ')' )?
-            int alt14=2;
-            int LA14_0 = input.LA(1);
-
-            if ( (LA14_0==16) ) {
-                alt14=1;
-            }
-            switch (alt14) {
-                case 1 :
-                    // ScriptGrammar.g:68:27: ')'
-                    {
-                    char_literal58=(Token)match(input,16,FOLLOW_16_in_ifexp565);  
-                    stream_16.add(char_literal58);
-
-
-                    }
-                    break;
-
-            }
-
-
-            pushFollow(FOLLOW_block_in_ifexp568);
-            block59=block();
-
-            state._fsp--;
-
-            stream_block.add(block59.getTree());
-
-            // AST REWRITE
-            // elements: boolexp, 32, block
-            // token labels: 
-            // rule labels: retval
-            // token list labels: 
-            // rule list labels: 
-            // wildcard labels: 
-            retval.tree = root_0;
-            RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
-
-            root_0 = (CommonTree)adaptor.nil();
-            // 68:38: -> ^( 'if' boolexp block )
-            {
-                // ScriptGrammar.g:68:41: ^( 'if' boolexp block )
-                {
-                CommonTree root_1 = (CommonTree)adaptor.nil();
-                root_1 = (CommonTree)adaptor.becomeRoot(
-                stream_32.nextNode()
-                , root_1);
-
-                adaptor.addChild(root_1, stream_boolexp.nextTree());
-
-                adaptor.addChild(root_1, stream_block.nextTree());
-
-                adaptor.addChild(root_0, root_1);
+                if ( (synpred1_ScriptGrammar()) ) {
+                    alt15=1;
                 }
+                else if ( (true) ) {
+                    alt15=2;
+                }
+                else {
+                    if (state.backtracking>0) {state.failed=true; return retval;}
+                    NoViableAltException nvae =
+                        new NoViableAltException("", 15, 1, input);
+
+                    throw nvae;
+
+                }
+            }
+            else {
+                if (state.backtracking>0) {state.failed=true; return retval;}
+                NoViableAltException nvae =
+                    new NoViableAltException("", 15, 0, input);
+
+                throw nvae;
 
             }
+            switch (alt15) {
+                case 1 :
+                    // ScriptGrammar.g:68:9: ( ifelseexp )=> ifelseexp
+                    {
+                    root_0 = (CommonTree)adaptor.nil();
 
 
-            retval.tree = root_0;
+                    pushFollow(FOLLOW_ifelseexp_in_ifexp564);
+                    ifelseexp55=ifelseexp();
+
+                    state._fsp--;
+                    if (state.failed) return retval;
+                    if ( state.backtracking==0 ) adaptor.addChild(root_0, ifelseexp55.getTree());
+
+                    }
+                    break;
+                case 2 :
+                    // ScriptGrammar.g:69:10: 'if' ( '(' )? boolexp ( ')' )? block
+                    {
+                    string_literal56=(Token)match(input,33,FOLLOW_33_in_ifexp575); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_33.add(string_literal56);
+
+
+                    // ScriptGrammar.g:69:15: ( '(' )?
+                    int alt13=2;
+                    int LA13_0 = input.LA(1);
+
+                    if ( (LA13_0==15) ) {
+                        alt13=1;
+                    }
+                    switch (alt13) {
+                        case 1 :
+                            // ScriptGrammar.g:69:15: '('
+                            {
+                            char_literal57=(Token)match(input,15,FOLLOW_15_in_ifexp577); if (state.failed) return retval; 
+                            if ( state.backtracking==0 ) stream_15.add(char_literal57);
+
+
+                            }
+                            break;
+
+                    }
+
+
+                    pushFollow(FOLLOW_boolexp_in_ifexp580);
+                    boolexp58=boolexp();
+
+                    state._fsp--;
+                    if (state.failed) return retval;
+                    if ( state.backtracking==0 ) stream_boolexp.add(boolexp58.getTree());
+
+                    // ScriptGrammar.g:69:28: ( ')' )?
+                    int alt14=2;
+                    int LA14_0 = input.LA(1);
+
+                    if ( (LA14_0==16) ) {
+                        alt14=1;
+                    }
+                    switch (alt14) {
+                        case 1 :
+                            // ScriptGrammar.g:69:28: ')'
+                            {
+                            char_literal59=(Token)match(input,16,FOLLOW_16_in_ifexp582); if (state.failed) return retval; 
+                            if ( state.backtracking==0 ) stream_16.add(char_literal59);
+
+
+                            }
+                            break;
+
+                    }
+
+
+                    pushFollow(FOLLOW_block_in_ifexp585);
+                    block60=block();
+
+                    state._fsp--;
+                    if (state.failed) return retval;
+                    if ( state.backtracking==0 ) stream_block.add(block60.getTree());
+
+                    // AST REWRITE
+                    // elements: boolexp, 33, block
+                    // token labels: 
+                    // rule labels: retval
+                    // token list labels: 
+                    // rule list labels: 
+                    // wildcard labels: 
+                    if ( state.backtracking==0 ) {
+
+                    retval.tree = root_0;
+                    RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
+
+                    root_0 = (CommonTree)adaptor.nil();
+                    // 69:39: -> ^( 'if' boolexp block )
+                    {
+                        // ScriptGrammar.g:69:42: ^( 'if' boolexp block )
+                        {
+                        CommonTree root_1 = (CommonTree)adaptor.nil();
+                        root_1 = (CommonTree)adaptor.becomeRoot(
+                        stream_33.nextNode()
+                        , root_1);
+
+                        adaptor.addChild(root_1, stream_boolexp.nextTree());
+
+                        adaptor.addChild(root_1, stream_block.nextTree());
+
+                        adaptor.addChild(root_0, root_1);
+                        }
+
+                    }
+
+
+                    retval.tree = root_0;
+                    }
+
+                    }
+                    break;
 
             }
-
             retval.stop = input.LT(-1);
 
 
+            if ( state.backtracking==0 ) {
+
             retval.tree = (CommonTree)adaptor.rulePostProcessing(root_0);
             adaptor.setTokenBoundaries(retval.tree, retval.start, retval.stop);
-
+            }
         }
         catch (RecognitionException re) {
             reportError(re);
@@ -1937,6 +2063,207 @@ public TreeAdaptor getTreeAdaptor() {
     // $ANTLR end "ifexp"
 
 
+    public static class ifelseexp_return extends ParserRuleReturnScope {
+        CommonTree tree;
+        public Object getTree() { return tree; }
+    };
+
+
+    // $ANTLR start "ifelseexp"
+    // ScriptGrammar.g:72:1: ifelseexp : 'if' ( '(' )? boolexp ( ')' )? block ( NEWLINE )? 'else' block -> ^( 'if' boolexp ( block )* ) ;
+    public final ScriptGrammarParser.ifelseexp_return ifelseexp() throws RecognitionException {
+        ScriptGrammarParser.ifelseexp_return retval = new ScriptGrammarParser.ifelseexp_return();
+        retval.start = input.LT(1);
+
+
+        CommonTree root_0 = null;
+
+        Token string_literal61=null;
+        Token char_literal62=null;
+        Token char_literal64=null;
+        Token NEWLINE66=null;
+        Token string_literal67=null;
+        ScriptGrammarParser.boolexp_return boolexp63 =null;
+
+        ScriptGrammarParser.block_return block65 =null;
+
+        ScriptGrammarParser.block_return block68 =null;
+
+
+        CommonTree string_literal61_tree=null;
+        CommonTree char_literal62_tree=null;
+        CommonTree char_literal64_tree=null;
+        CommonTree NEWLINE66_tree=null;
+        CommonTree string_literal67_tree=null;
+        RewriteRuleTokenStream stream_NEWLINE=new RewriteRuleTokenStream(adaptor,"token NEWLINE");
+        RewriteRuleTokenStream stream_31=new RewriteRuleTokenStream(adaptor,"token 31");
+        RewriteRuleTokenStream stream_15=new RewriteRuleTokenStream(adaptor,"token 15");
+        RewriteRuleTokenStream stream_33=new RewriteRuleTokenStream(adaptor,"token 33");
+        RewriteRuleTokenStream stream_16=new RewriteRuleTokenStream(adaptor,"token 16");
+        RewriteRuleSubtreeStream stream_boolexp=new RewriteRuleSubtreeStream(adaptor,"rule boolexp");
+        RewriteRuleSubtreeStream stream_block=new RewriteRuleSubtreeStream(adaptor,"rule block");
+        try {
+            // ScriptGrammar.g:72:10: ( 'if' ( '(' )? boolexp ( ')' )? block ( NEWLINE )? 'else' block -> ^( 'if' boolexp ( block )* ) )
+            // ScriptGrammar.g:72:12: 'if' ( '(' )? boolexp ( ')' )? block ( NEWLINE )? 'else' block
+            {
+            string_literal61=(Token)match(input,33,FOLLOW_33_in_ifelseexp611); if (state.failed) return retval; 
+            if ( state.backtracking==0 ) stream_33.add(string_literal61);
+
+
+            // ScriptGrammar.g:72:17: ( '(' )?
+            int alt16=2;
+            int LA16_0 = input.LA(1);
+
+            if ( (LA16_0==15) ) {
+                alt16=1;
+            }
+            switch (alt16) {
+                case 1 :
+                    // ScriptGrammar.g:72:17: '('
+                    {
+                    char_literal62=(Token)match(input,15,FOLLOW_15_in_ifelseexp613); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_15.add(char_literal62);
+
+
+                    }
+                    break;
+
+            }
+
+
+            pushFollow(FOLLOW_boolexp_in_ifelseexp616);
+            boolexp63=boolexp();
+
+            state._fsp--;
+            if (state.failed) return retval;
+            if ( state.backtracking==0 ) stream_boolexp.add(boolexp63.getTree());
+
+            // ScriptGrammar.g:72:30: ( ')' )?
+            int alt17=2;
+            int LA17_0 = input.LA(1);
+
+            if ( (LA17_0==16) ) {
+                alt17=1;
+            }
+            switch (alt17) {
+                case 1 :
+                    // ScriptGrammar.g:72:30: ')'
+                    {
+                    char_literal64=(Token)match(input,16,FOLLOW_16_in_ifelseexp618); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_16.add(char_literal64);
+
+
+                    }
+                    break;
+
+            }
+
+
+            pushFollow(FOLLOW_block_in_ifelseexp621);
+            block65=block();
+
+            state._fsp--;
+            if (state.failed) return retval;
+            if ( state.backtracking==0 ) stream_block.add(block65.getTree());
+
+            // ScriptGrammar.g:72:41: ( NEWLINE )?
+            int alt18=2;
+            int LA18_0 = input.LA(1);
+
+            if ( (LA18_0==NEWLINE) ) {
+                alt18=1;
+            }
+            switch (alt18) {
+                case 1 :
+                    // ScriptGrammar.g:72:41: NEWLINE
+                    {
+                    NEWLINE66=(Token)match(input,NEWLINE,FOLLOW_NEWLINE_in_ifelseexp623); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_NEWLINE.add(NEWLINE66);
+
+
+                    }
+                    break;
+
+            }
+
+
+            string_literal67=(Token)match(input,31,FOLLOW_31_in_ifelseexp626); if (state.failed) return retval; 
+            if ( state.backtracking==0 ) stream_31.add(string_literal67);
+
+
+            pushFollow(FOLLOW_block_in_ifelseexp628);
+            block68=block();
+
+            state._fsp--;
+            if (state.failed) return retval;
+            if ( state.backtracking==0 ) stream_block.add(block68.getTree());
+
+            // AST REWRITE
+            // elements: boolexp, block, 33
+            // token labels: 
+            // rule labels: retval
+            // token list labels: 
+            // rule list labels: 
+            // wildcard labels: 
+            if ( state.backtracking==0 ) {
+
+            retval.tree = root_0;
+            RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
+
+            root_0 = (CommonTree)adaptor.nil();
+            // 72:63: -> ^( 'if' boolexp ( block )* )
+            {
+                // ScriptGrammar.g:72:66: ^( 'if' boolexp ( block )* )
+                {
+                CommonTree root_1 = (CommonTree)adaptor.nil();
+                root_1 = (CommonTree)adaptor.becomeRoot(
+                stream_33.nextNode()
+                , root_1);
+
+                adaptor.addChild(root_1, stream_boolexp.nextTree());
+
+                // ScriptGrammar.g:72:81: ( block )*
+                while ( stream_block.hasNext() ) {
+                    adaptor.addChild(root_1, stream_block.nextTree());
+
+                }
+                stream_block.reset();
+
+                adaptor.addChild(root_0, root_1);
+                }
+
+            }
+
+
+            retval.tree = root_0;
+            }
+
+            }
+
+            retval.stop = input.LT(-1);
+
+
+            if ( state.backtracking==0 ) {
+
+            retval.tree = (CommonTree)adaptor.rulePostProcessing(root_0);
+            adaptor.setTokenBoundaries(retval.tree, retval.start, retval.stop);
+            }
+        }
+        catch (RecognitionException re) {
+            reportError(re);
+            recover(input,re);
+    	retval.tree = (CommonTree)adaptor.errorNode(input, retval.start, input.LT(-1), re);
+
+        }
+
+        finally {
+        	// do for sure before leaving
+        }
+        return retval;
+    }
+    // $ANTLR end "ifelseexp"
+
+
     public static class whileexp_return extends ParserRuleReturnScope {
         CommonTree tree;
         public Object getTree() { return tree; }
@@ -1944,7 +2271,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "whileexp"
-    // ScriptGrammar.g:71:1: whileexp : 'while' ( '(' )? boolexp ( ')' )? block -> ^( 'while' boolexp block ) ;
+    // ScriptGrammar.g:75:1: whileexp : 'while' ( '(' )? boolexp ( ')' )? block -> ^( 'while' boolexp block ) ;
     public final ScriptGrammarParser.whileexp_return whileexp() throws RecognitionException {
         ScriptGrammarParser.whileexp_return retval = new ScriptGrammarParser.whileexp_return();
         retval.start = input.LT(1);
@@ -1952,43 +2279,43 @@ public TreeAdaptor getTreeAdaptor() {
 
         CommonTree root_0 = null;
 
-        Token string_literal60=null;
-        Token char_literal61=null;
-        Token char_literal63=null;
-        ScriptGrammarParser.boolexp_return boolexp62 =null;
+        Token string_literal69=null;
+        Token char_literal70=null;
+        Token char_literal72=null;
+        ScriptGrammarParser.boolexp_return boolexp71 =null;
 
-        ScriptGrammarParser.block_return block64 =null;
+        ScriptGrammarParser.block_return block73 =null;
 
 
-        CommonTree string_literal60_tree=null;
-        CommonTree char_literal61_tree=null;
-        CommonTree char_literal63_tree=null;
+        CommonTree string_literal69_tree=null;
+        CommonTree char_literal70_tree=null;
+        CommonTree char_literal72_tree=null;
+        RewriteRuleTokenStream stream_35=new RewriteRuleTokenStream(adaptor,"token 35");
         RewriteRuleTokenStream stream_15=new RewriteRuleTokenStream(adaptor,"token 15");
         RewriteRuleTokenStream stream_16=new RewriteRuleTokenStream(adaptor,"token 16");
-        RewriteRuleTokenStream stream_34=new RewriteRuleTokenStream(adaptor,"token 34");
         RewriteRuleSubtreeStream stream_boolexp=new RewriteRuleSubtreeStream(adaptor,"rule boolexp");
         RewriteRuleSubtreeStream stream_block=new RewriteRuleSubtreeStream(adaptor,"rule block");
         try {
-            // ScriptGrammar.g:71:9: ( 'while' ( '(' )? boolexp ( ')' )? block -> ^( 'while' boolexp block ) )
-            // ScriptGrammar.g:71:12: 'while' ( '(' )? boolexp ( ')' )? block
+            // ScriptGrammar.g:75:9: ( 'while' ( '(' )? boolexp ( ')' )? block -> ^( 'while' boolexp block ) )
+            // ScriptGrammar.g:75:12: 'while' ( '(' )? boolexp ( ')' )? block
             {
-            string_literal60=(Token)match(input,34,FOLLOW_34_in_whileexp595);  
-            stream_34.add(string_literal60);
+            string_literal69=(Token)match(input,35,FOLLOW_35_in_whileexp656); if (state.failed) return retval; 
+            if ( state.backtracking==0 ) stream_35.add(string_literal69);
 
 
-            // ScriptGrammar.g:71:20: ( '(' )?
-            int alt15=2;
-            int LA15_0 = input.LA(1);
+            // ScriptGrammar.g:75:20: ( '(' )?
+            int alt19=2;
+            int LA19_0 = input.LA(1);
 
-            if ( (LA15_0==15) ) {
-                alt15=1;
+            if ( (LA19_0==15) ) {
+                alt19=1;
             }
-            switch (alt15) {
+            switch (alt19) {
                 case 1 :
-                    // ScriptGrammar.g:71:20: '('
+                    // ScriptGrammar.g:75:20: '('
                     {
-                    char_literal61=(Token)match(input,15,FOLLOW_15_in_whileexp597);  
-                    stream_15.add(char_literal61);
+                    char_literal70=(Token)match(input,15,FOLLOW_15_in_whileexp658); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_15.add(char_literal70);
 
 
                     }
@@ -1997,26 +2324,26 @@ public TreeAdaptor getTreeAdaptor() {
             }
 
 
-            pushFollow(FOLLOW_boolexp_in_whileexp600);
-            boolexp62=boolexp();
+            pushFollow(FOLLOW_boolexp_in_whileexp661);
+            boolexp71=boolexp();
 
             state._fsp--;
+            if (state.failed) return retval;
+            if ( state.backtracking==0 ) stream_boolexp.add(boolexp71.getTree());
 
-            stream_boolexp.add(boolexp62.getTree());
+            // ScriptGrammar.g:75:33: ( ')' )?
+            int alt20=2;
+            int LA20_0 = input.LA(1);
 
-            // ScriptGrammar.g:71:33: ( ')' )?
-            int alt16=2;
-            int LA16_0 = input.LA(1);
-
-            if ( (LA16_0==16) ) {
-                alt16=1;
+            if ( (LA20_0==16) ) {
+                alt20=1;
             }
-            switch (alt16) {
+            switch (alt20) {
                 case 1 :
-                    // ScriptGrammar.g:71:33: ')'
+                    // ScriptGrammar.g:75:33: ')'
                     {
-                    char_literal63=(Token)match(input,16,FOLLOW_16_in_whileexp602);  
-                    stream_16.add(char_literal63);
+                    char_literal72=(Token)match(input,16,FOLLOW_16_in_whileexp663); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_16.add(char_literal72);
 
 
                     }
@@ -2025,31 +2352,33 @@ public TreeAdaptor getTreeAdaptor() {
             }
 
 
-            pushFollow(FOLLOW_block_in_whileexp605);
-            block64=block();
+            pushFollow(FOLLOW_block_in_whileexp666);
+            block73=block();
 
             state._fsp--;
-
-            stream_block.add(block64.getTree());
+            if (state.failed) return retval;
+            if ( state.backtracking==0 ) stream_block.add(block73.getTree());
 
             // AST REWRITE
-            // elements: block, boolexp, 34
+            // elements: boolexp, 35, block
             // token labels: 
             // rule labels: retval
             // token list labels: 
             // rule list labels: 
             // wildcard labels: 
+            if ( state.backtracking==0 ) {
+
             retval.tree = root_0;
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
             root_0 = (CommonTree)adaptor.nil();
-            // 71:44: -> ^( 'while' boolexp block )
+            // 75:44: -> ^( 'while' boolexp block )
             {
-                // ScriptGrammar.g:71:47: ^( 'while' boolexp block )
+                // ScriptGrammar.g:75:47: ^( 'while' boolexp block )
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot(
-                stream_34.nextNode()
+                stream_35.nextNode()
                 , root_1);
 
                 adaptor.addChild(root_1, stream_boolexp.nextTree());
@@ -2063,15 +2392,18 @@ public TreeAdaptor getTreeAdaptor() {
 
 
             retval.tree = root_0;
+            }
 
             }
 
             retval.stop = input.LT(-1);
 
 
+            if ( state.backtracking==0 ) {
+
             retval.tree = (CommonTree)adaptor.rulePostProcessing(root_0);
             adaptor.setTokenBoundaries(retval.tree, retval.start, retval.stop);
-
+            }
         }
         catch (RecognitionException re) {
             reportError(re);
@@ -2095,7 +2427,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "boolexp"
-    // ScriptGrammar.g:74:1: boolexp : boolterm ( '==' ^| '!=' ^| '>' ^| '>=' ^| '<' ^| '<=' ^) boolterm ;
+    // ScriptGrammar.g:78:1: boolexp : boolterm ( '==' ^| '!=' ^| '>' ^| '>=' ^| '<' ^| '<=' ^) boolterm ;
     public final ScriptGrammarParser.boolexp_return boolexp() throws RecognitionException {
         ScriptGrammarParser.boolexp_return retval = new ScriptGrammarParser.boolexp_return();
         retval.start = input.LT(1);
@@ -2103,149 +2435,156 @@ public TreeAdaptor getTreeAdaptor() {
 
         CommonTree root_0 = null;
 
-        Token string_literal66=null;
-        Token string_literal67=null;
-        Token char_literal68=null;
-        Token string_literal69=null;
-        Token char_literal70=null;
-        Token string_literal71=null;
-        ScriptGrammarParser.boolterm_return boolterm65 =null;
+        Token string_literal75=null;
+        Token string_literal76=null;
+        Token char_literal77=null;
+        Token string_literal78=null;
+        Token char_literal79=null;
+        Token string_literal80=null;
+        ScriptGrammarParser.boolterm_return boolterm74 =null;
 
-        ScriptGrammarParser.boolterm_return boolterm72 =null;
+        ScriptGrammarParser.boolterm_return boolterm81 =null;
 
 
-        CommonTree string_literal66_tree=null;
-        CommonTree string_literal67_tree=null;
-        CommonTree char_literal68_tree=null;
-        CommonTree string_literal69_tree=null;
-        CommonTree char_literal70_tree=null;
-        CommonTree string_literal71_tree=null;
+        CommonTree string_literal75_tree=null;
+        CommonTree string_literal76_tree=null;
+        CommonTree char_literal77_tree=null;
+        CommonTree string_literal78_tree=null;
+        CommonTree char_literal79_tree=null;
+        CommonTree string_literal80_tree=null;
 
         try {
-            // ScriptGrammar.g:74:8: ( boolterm ( '==' ^| '!=' ^| '>' ^| '>=' ^| '<' ^| '<=' ^) boolterm )
-            // ScriptGrammar.g:74:11: boolterm ( '==' ^| '!=' ^| '>' ^| '>=' ^| '<' ^| '<=' ^) boolterm
+            // ScriptGrammar.g:78:8: ( boolterm ( '==' ^| '!=' ^| '>' ^| '>=' ^| '<' ^| '<=' ^) boolterm )
+            // ScriptGrammar.g:78:11: boolterm ( '==' ^| '!=' ^| '>' ^| '>=' ^| '<' ^| '<=' ^) boolterm
             {
             root_0 = (CommonTree)adaptor.nil();
 
 
-            pushFollow(FOLLOW_boolterm_in_boolexp632);
-            boolterm65=boolterm();
+            pushFollow(FOLLOW_boolterm_in_boolexp693);
+            boolterm74=boolterm();
 
             state._fsp--;
+            if (state.failed) return retval;
+            if ( state.backtracking==0 ) adaptor.addChild(root_0, boolterm74.getTree());
 
-            adaptor.addChild(root_0, boolterm65.getTree());
-
-            // ScriptGrammar.g:74:20: ( '==' ^| '!=' ^| '>' ^| '>=' ^| '<' ^| '<=' ^)
-            int alt17=6;
+            // ScriptGrammar.g:78:20: ( '==' ^| '!=' ^| '>' ^| '>=' ^| '<' ^| '<=' ^)
+            int alt21=6;
             switch ( input.LA(1) ) {
             case 27:
                 {
-                alt17=1;
+                alt21=1;
                 }
                 break;
             case 12:
                 {
-                alt17=2;
+                alt21=2;
                 }
                 break;
             case 28:
                 {
-                alt17=3;
+                alt21=3;
                 }
                 break;
             case 29:
                 {
-                alt17=4;
+                alt21=4;
                 }
                 break;
             case 22:
                 {
-                alt17=5;
+                alt21=5;
                 }
                 break;
             case 25:
                 {
-                alt17=6;
+                alt21=6;
                 }
                 break;
             default:
+                if (state.backtracking>0) {state.failed=true; return retval;}
                 NoViableAltException nvae =
-                    new NoViableAltException("", 17, 0, input);
+                    new NoViableAltException("", 21, 0, input);
 
                 throw nvae;
 
             }
 
-            switch (alt17) {
+            switch (alt21) {
                 case 1 :
-                    // ScriptGrammar.g:74:21: '==' ^
+                    // ScriptGrammar.g:78:21: '==' ^
                     {
-                    string_literal66=(Token)match(input,27,FOLLOW_27_in_boolexp635); 
-                    string_literal66_tree = 
-                    (CommonTree)adaptor.create(string_literal66)
+                    string_literal75=(Token)match(input,27,FOLLOW_27_in_boolexp696); if (state.failed) return retval;
+                    if ( state.backtracking==0 ) {
+                    string_literal75_tree = 
+                    (CommonTree)adaptor.create(string_literal75)
                     ;
-                    root_0 = (CommonTree)adaptor.becomeRoot(string_literal66_tree, root_0);
-
+                    root_0 = (CommonTree)adaptor.becomeRoot(string_literal75_tree, root_0);
+                    }
 
                     }
                     break;
                 case 2 :
-                    // ScriptGrammar.g:74:27: '!=' ^
+                    // ScriptGrammar.g:78:27: '!=' ^
                     {
-                    string_literal67=(Token)match(input,12,FOLLOW_12_in_boolexp638); 
-                    string_literal67_tree = 
-                    (CommonTree)adaptor.create(string_literal67)
+                    string_literal76=(Token)match(input,12,FOLLOW_12_in_boolexp699); if (state.failed) return retval;
+                    if ( state.backtracking==0 ) {
+                    string_literal76_tree = 
+                    (CommonTree)adaptor.create(string_literal76)
                     ;
-                    root_0 = (CommonTree)adaptor.becomeRoot(string_literal67_tree, root_0);
-
+                    root_0 = (CommonTree)adaptor.becomeRoot(string_literal76_tree, root_0);
+                    }
 
                     }
                     break;
                 case 3 :
-                    // ScriptGrammar.g:74:33: '>' ^
+                    // ScriptGrammar.g:78:33: '>' ^
                     {
-                    char_literal68=(Token)match(input,28,FOLLOW_28_in_boolexp641); 
-                    char_literal68_tree = 
-                    (CommonTree)adaptor.create(char_literal68)
+                    char_literal77=(Token)match(input,28,FOLLOW_28_in_boolexp702); if (state.failed) return retval;
+                    if ( state.backtracking==0 ) {
+                    char_literal77_tree = 
+                    (CommonTree)adaptor.create(char_literal77)
                     ;
-                    root_0 = (CommonTree)adaptor.becomeRoot(char_literal68_tree, root_0);
-
+                    root_0 = (CommonTree)adaptor.becomeRoot(char_literal77_tree, root_0);
+                    }
 
                     }
                     break;
                 case 4 :
-                    // ScriptGrammar.g:74:38: '>=' ^
+                    // ScriptGrammar.g:78:38: '>=' ^
                     {
-                    string_literal69=(Token)match(input,29,FOLLOW_29_in_boolexp644); 
-                    string_literal69_tree = 
-                    (CommonTree)adaptor.create(string_literal69)
+                    string_literal78=(Token)match(input,29,FOLLOW_29_in_boolexp705); if (state.failed) return retval;
+                    if ( state.backtracking==0 ) {
+                    string_literal78_tree = 
+                    (CommonTree)adaptor.create(string_literal78)
                     ;
-                    root_0 = (CommonTree)adaptor.becomeRoot(string_literal69_tree, root_0);
-
+                    root_0 = (CommonTree)adaptor.becomeRoot(string_literal78_tree, root_0);
+                    }
 
                     }
                     break;
                 case 5 :
-                    // ScriptGrammar.g:74:44: '<' ^
+                    // ScriptGrammar.g:78:44: '<' ^
                     {
-                    char_literal70=(Token)match(input,22,FOLLOW_22_in_boolexp647); 
-                    char_literal70_tree = 
-                    (CommonTree)adaptor.create(char_literal70)
+                    char_literal79=(Token)match(input,22,FOLLOW_22_in_boolexp708); if (state.failed) return retval;
+                    if ( state.backtracking==0 ) {
+                    char_literal79_tree = 
+                    (CommonTree)adaptor.create(char_literal79)
                     ;
-                    root_0 = (CommonTree)adaptor.becomeRoot(char_literal70_tree, root_0);
-
+                    root_0 = (CommonTree)adaptor.becomeRoot(char_literal79_tree, root_0);
+                    }
 
                     }
                     break;
                 case 6 :
-                    // ScriptGrammar.g:74:49: '<=' ^
+                    // ScriptGrammar.g:78:49: '<=' ^
                     {
-                    string_literal71=(Token)match(input,25,FOLLOW_25_in_boolexp650); 
-                    string_literal71_tree = 
-                    (CommonTree)adaptor.create(string_literal71)
+                    string_literal80=(Token)match(input,25,FOLLOW_25_in_boolexp711); if (state.failed) return retval;
+                    if ( state.backtracking==0 ) {
+                    string_literal80_tree = 
+                    (CommonTree)adaptor.create(string_literal80)
                     ;
-                    root_0 = (CommonTree)adaptor.becomeRoot(string_literal71_tree, root_0);
-
+                    root_0 = (CommonTree)adaptor.becomeRoot(string_literal80_tree, root_0);
+                    }
 
                     }
                     break;
@@ -2253,21 +2592,23 @@ public TreeAdaptor getTreeAdaptor() {
             }
 
 
-            pushFollow(FOLLOW_boolterm_in_boolexp654);
-            boolterm72=boolterm();
+            pushFollow(FOLLOW_boolterm_in_boolexp715);
+            boolterm81=boolterm();
 
             state._fsp--;
-
-            adaptor.addChild(root_0, boolterm72.getTree());
+            if (state.failed) return retval;
+            if ( state.backtracking==0 ) adaptor.addChild(root_0, boolterm81.getTree());
 
             }
 
             retval.stop = input.LT(-1);
 
 
+            if ( state.backtracking==0 ) {
+
             retval.tree = (CommonTree)adaptor.rulePostProcessing(root_0);
             adaptor.setTokenBoundaries(retval.tree, retval.start, retval.stop);
-
+            }
         }
         catch (RecognitionException re) {
             reportError(re);
@@ -2291,7 +2632,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "boolterm"
-    // ScriptGrammar.g:77:1: boolterm : ( ID | INT ) ;
+    // ScriptGrammar.g:81:1: boolterm : ( ID | INT ) ;
     public final ScriptGrammarParser.boolterm_return boolterm() throws RecognitionException {
         ScriptGrammarParser.boolterm_return retval = new ScriptGrammarParser.boolterm_return();
         retval.start = input.LT(1);
@@ -2299,27 +2640,29 @@ public TreeAdaptor getTreeAdaptor() {
 
         CommonTree root_0 = null;
 
-        Token set73=null;
+        Token set82=null;
 
-        CommonTree set73_tree=null;
+        CommonTree set82_tree=null;
 
         try {
-            // ScriptGrammar.g:77:9: ( ( ID | INT ) )
+            // ScriptGrammar.g:81:9: ( ( ID | INT ) )
             // ScriptGrammar.g:
             {
             root_0 = (CommonTree)adaptor.nil();
 
 
-            set73=(Token)input.LT(1);
+            set82=(Token)input.LT(1);
 
             if ( (input.LA(1) >= ID && input.LA(1) <= INT) ) {
                 input.consume();
-                adaptor.addChild(root_0, 
-                (CommonTree)adaptor.create(set73)
+                if ( state.backtracking==0 ) adaptor.addChild(root_0, 
+                (CommonTree)adaptor.create(set82)
                 );
                 state.errorRecovery=false;
+                state.failed=false;
             }
             else {
+                if (state.backtracking>0) {state.failed=true; return retval;}
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 throw mse;
             }
@@ -2330,9 +2673,11 @@ public TreeAdaptor getTreeAdaptor() {
             retval.stop = input.LT(-1);
 
 
+            if ( state.backtracking==0 ) {
+
             retval.tree = (CommonTree)adaptor.rulePostProcessing(root_0);
             adaptor.setTokenBoundaries(retval.tree, retval.start, retval.stop);
-
+            }
         }
         catch (RecognitionException re) {
             reportError(re);
@@ -2356,7 +2701,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "forexp"
-    // ScriptGrammar.g:80:1: forexp : 'for' ( '(' )? ID ( ',' forterm )* ( ')' )? block -> ^( 'for' ID ( forterm )* block ) ;
+    // ScriptGrammar.g:84:1: forexp : 'for' ( '(' )? ID ( ',' forterm )* ( ')' )? block -> ^( 'for' ID ( forterm )* block ) ;
     public final ScriptGrammarParser.forexp_return forexp() throws RecognitionException {
         ScriptGrammarParser.forexp_return retval = new ScriptGrammarParser.forexp_return();
         retval.start = input.LT(1);
@@ -2364,49 +2709,49 @@ public TreeAdaptor getTreeAdaptor() {
 
         CommonTree root_0 = null;
 
-        Token string_literal74=null;
-        Token char_literal75=null;
-        Token ID76=null;
-        Token char_literal77=null;
-        Token char_literal79=null;
-        ScriptGrammarParser.forterm_return forterm78 =null;
+        Token string_literal83=null;
+        Token char_literal84=null;
+        Token ID85=null;
+        Token char_literal86=null;
+        Token char_literal88=null;
+        ScriptGrammarParser.forterm_return forterm87 =null;
 
-        ScriptGrammarParser.block_return block80 =null;
+        ScriptGrammarParser.block_return block89 =null;
 
 
-        CommonTree string_literal74_tree=null;
-        CommonTree char_literal75_tree=null;
-        CommonTree ID76_tree=null;
-        CommonTree char_literal77_tree=null;
-        CommonTree char_literal79_tree=null;
+        CommonTree string_literal83_tree=null;
+        CommonTree char_literal84_tree=null;
+        CommonTree ID85_tree=null;
+        CommonTree char_literal86_tree=null;
+        CommonTree char_literal88_tree=null;
         RewriteRuleTokenStream stream_19=new RewriteRuleTokenStream(adaptor,"token 19");
-        RewriteRuleTokenStream stream_31=new RewriteRuleTokenStream(adaptor,"token 31");
+        RewriteRuleTokenStream stream_32=new RewriteRuleTokenStream(adaptor,"token 32");
         RewriteRuleTokenStream stream_ID=new RewriteRuleTokenStream(adaptor,"token ID");
         RewriteRuleTokenStream stream_15=new RewriteRuleTokenStream(adaptor,"token 15");
         RewriteRuleTokenStream stream_16=new RewriteRuleTokenStream(adaptor,"token 16");
         RewriteRuleSubtreeStream stream_forterm=new RewriteRuleSubtreeStream(adaptor,"rule forterm");
         RewriteRuleSubtreeStream stream_block=new RewriteRuleSubtreeStream(adaptor,"rule block");
         try {
-            // ScriptGrammar.g:80:7: ( 'for' ( '(' )? ID ( ',' forterm )* ( ')' )? block -> ^( 'for' ID ( forterm )* block ) )
-            // ScriptGrammar.g:80:9: 'for' ( '(' )? ID ( ',' forterm )* ( ')' )? block
+            // ScriptGrammar.g:84:7: ( 'for' ( '(' )? ID ( ',' forterm )* ( ')' )? block -> ^( 'for' ID ( forterm )* block ) )
+            // ScriptGrammar.g:84:9: 'for' ( '(' )? ID ( ',' forterm )* ( ')' )? block
             {
-            string_literal74=(Token)match(input,31,FOLLOW_31_in_forexp686);  
-            stream_31.add(string_literal74);
+            string_literal83=(Token)match(input,32,FOLLOW_32_in_forexp747); if (state.failed) return retval; 
+            if ( state.backtracking==0 ) stream_32.add(string_literal83);
 
 
-            // ScriptGrammar.g:80:15: ( '(' )?
-            int alt18=2;
-            int LA18_0 = input.LA(1);
+            // ScriptGrammar.g:84:15: ( '(' )?
+            int alt22=2;
+            int LA22_0 = input.LA(1);
 
-            if ( (LA18_0==15) ) {
-                alt18=1;
+            if ( (LA22_0==15) ) {
+                alt22=1;
             }
-            switch (alt18) {
+            switch (alt22) {
                 case 1 :
-                    // ScriptGrammar.g:80:15: '('
+                    // ScriptGrammar.g:84:15: '('
                     {
-                    char_literal75=(Token)match(input,15,FOLLOW_15_in_forexp688);  
-                    stream_15.add(char_literal75);
+                    char_literal84=(Token)match(input,15,FOLLOW_15_in_forexp749); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_15.add(char_literal84);
 
 
                     }
@@ -2415,58 +2760,58 @@ public TreeAdaptor getTreeAdaptor() {
             }
 
 
-            ID76=(Token)match(input,ID,FOLLOW_ID_in_forexp691);  
-            stream_ID.add(ID76);
+            ID85=(Token)match(input,ID,FOLLOW_ID_in_forexp752); if (state.failed) return retval; 
+            if ( state.backtracking==0 ) stream_ID.add(ID85);
 
 
-            // ScriptGrammar.g:80:23: ( ',' forterm )*
-            loop19:
+            // ScriptGrammar.g:84:23: ( ',' forterm )*
+            loop23:
             do {
-                int alt19=2;
-                int LA19_0 = input.LA(1);
+                int alt23=2;
+                int LA23_0 = input.LA(1);
 
-                if ( (LA19_0==19) ) {
-                    alt19=1;
+                if ( (LA23_0==19) ) {
+                    alt23=1;
                 }
 
 
-                switch (alt19) {
+                switch (alt23) {
             	case 1 :
-            	    // ScriptGrammar.g:80:24: ',' forterm
+            	    // ScriptGrammar.g:84:24: ',' forterm
             	    {
-            	    char_literal77=(Token)match(input,19,FOLLOW_19_in_forexp694);  
-            	    stream_19.add(char_literal77);
+            	    char_literal86=(Token)match(input,19,FOLLOW_19_in_forexp755); if (state.failed) return retval; 
+            	    if ( state.backtracking==0 ) stream_19.add(char_literal86);
 
 
-            	    pushFollow(FOLLOW_forterm_in_forexp696);
-            	    forterm78=forterm();
+            	    pushFollow(FOLLOW_forterm_in_forexp757);
+            	    forterm87=forterm();
 
             	    state._fsp--;
-
-            	    stream_forterm.add(forterm78.getTree());
+            	    if (state.failed) return retval;
+            	    if ( state.backtracking==0 ) stream_forterm.add(forterm87.getTree());
 
             	    }
             	    break;
 
             	default :
-            	    break loop19;
+            	    break loop23;
                 }
             } while (true);
 
 
-            // ScriptGrammar.g:80:38: ( ')' )?
-            int alt20=2;
-            int LA20_0 = input.LA(1);
+            // ScriptGrammar.g:84:38: ( ')' )?
+            int alt24=2;
+            int LA24_0 = input.LA(1);
 
-            if ( (LA20_0==16) ) {
-                alt20=1;
+            if ( (LA24_0==16) ) {
+                alt24=1;
             }
-            switch (alt20) {
+            switch (alt24) {
                 case 1 :
-                    // ScriptGrammar.g:80:38: ')'
+                    // ScriptGrammar.g:84:38: ')'
                     {
-                    char_literal79=(Token)match(input,16,FOLLOW_16_in_forexp700);  
-                    stream_16.add(char_literal79);
+                    char_literal88=(Token)match(input,16,FOLLOW_16_in_forexp761); if (state.failed) return retval; 
+                    if ( state.backtracking==0 ) stream_16.add(char_literal88);
 
 
                     }
@@ -2475,38 +2820,40 @@ public TreeAdaptor getTreeAdaptor() {
             }
 
 
-            pushFollow(FOLLOW_block_in_forexp703);
-            block80=block();
+            pushFollow(FOLLOW_block_in_forexp764);
+            block89=block();
 
             state._fsp--;
-
-            stream_block.add(block80.getTree());
+            if (state.failed) return retval;
+            if ( state.backtracking==0 ) stream_block.add(block89.getTree());
 
             // AST REWRITE
-            // elements: forterm, 31, block, ID
+            // elements: block, ID, 32, forterm
             // token labels: 
             // rule labels: retval
             // token list labels: 
             // rule list labels: 
             // wildcard labels: 
+            if ( state.backtracking==0 ) {
+
             retval.tree = root_0;
             RewriteRuleSubtreeStream stream_retval=new RewriteRuleSubtreeStream(adaptor,"rule retval",retval!=null?retval.tree:null);
 
             root_0 = (CommonTree)adaptor.nil();
-            // 80:49: -> ^( 'for' ID ( forterm )* block )
+            // 84:49: -> ^( 'for' ID ( forterm )* block )
             {
-                // ScriptGrammar.g:80:52: ^( 'for' ID ( forterm )* block )
+                // ScriptGrammar.g:84:52: ^( 'for' ID ( forterm )* block )
                 {
                 CommonTree root_1 = (CommonTree)adaptor.nil();
                 root_1 = (CommonTree)adaptor.becomeRoot(
-                stream_31.nextNode()
+                stream_32.nextNode()
                 , root_1);
 
                 adaptor.addChild(root_1, 
                 stream_ID.nextNode()
                 );
 
-                // ScriptGrammar.g:80:63: ( forterm )*
+                // ScriptGrammar.g:84:63: ( forterm )*
                 while ( stream_forterm.hasNext() ) {
                     adaptor.addChild(root_1, stream_forterm.nextTree());
 
@@ -2522,15 +2869,18 @@ public TreeAdaptor getTreeAdaptor() {
 
 
             retval.tree = root_0;
+            }
 
             }
 
             retval.stop = input.LT(-1);
 
 
+            if ( state.backtracking==0 ) {
+
             retval.tree = (CommonTree)adaptor.rulePostProcessing(root_0);
             adaptor.setTokenBoundaries(retval.tree, retval.start, retval.stop);
-
+            }
         }
         catch (RecognitionException re) {
             reportError(re);
@@ -2554,7 +2904,7 @@ public TreeAdaptor getTreeAdaptor() {
 
 
     // $ANTLR start "forterm"
-    // ScriptGrammar.g:83:1: forterm : ( ID | INT ) ;
+    // ScriptGrammar.g:87:1: forterm : ( ID | INT ) ;
     public final ScriptGrammarParser.forterm_return forterm() throws RecognitionException {
         ScriptGrammarParser.forterm_return retval = new ScriptGrammarParser.forterm_return();
         retval.start = input.LT(1);
@@ -2562,27 +2912,29 @@ public TreeAdaptor getTreeAdaptor() {
 
         CommonTree root_0 = null;
 
-        Token set81=null;
+        Token set90=null;
 
-        CommonTree set81_tree=null;
+        CommonTree set90_tree=null;
 
         try {
-            // ScriptGrammar.g:83:8: ( ( ID | INT ) )
+            // ScriptGrammar.g:87:8: ( ( ID | INT ) )
             // ScriptGrammar.g:
             {
             root_0 = (CommonTree)adaptor.nil();
 
 
-            set81=(Token)input.LT(1);
+            set90=(Token)input.LT(1);
 
             if ( (input.LA(1) >= ID && input.LA(1) <= INT) ) {
                 input.consume();
-                adaptor.addChild(root_0, 
-                (CommonTree)adaptor.create(set81)
+                if ( state.backtracking==0 ) adaptor.addChild(root_0, 
+                (CommonTree)adaptor.create(set90)
                 );
                 state.errorRecovery=false;
+                state.failed=false;
             }
             else {
+                if (state.backtracking>0) {state.failed=true; return retval;}
                 MismatchedSetException mse = new MismatchedSetException(null,input);
                 throw mse;
             }
@@ -2593,9 +2945,11 @@ public TreeAdaptor getTreeAdaptor() {
             retval.stop = input.LT(-1);
 
 
+            if ( state.backtracking==0 ) {
+
             retval.tree = (CommonTree)adaptor.rulePostProcessing(root_0);
             adaptor.setTokenBoundaries(retval.tree, retval.start, retval.stop);
-
+            }
         }
         catch (RecognitionException re) {
             reportError(re);
@@ -2611,16 +2965,47 @@ public TreeAdaptor getTreeAdaptor() {
     }
     // $ANTLR end "forterm"
 
+    // $ANTLR start synpred1_ScriptGrammar
+    public final void synpred1_ScriptGrammar_fragment() throws RecognitionException {
+        // ScriptGrammar.g:68:9: ( ifelseexp )
+        // ScriptGrammar.g:68:10: ifelseexp
+        {
+        pushFollow(FOLLOW_ifelseexp_in_synpred1_ScriptGrammar559);
+        ifelseexp();
+
+        state._fsp--;
+        if (state.failed) return ;
+
+        }
+
+    }
+    // $ANTLR end synpred1_ScriptGrammar
+
     // Delegated rules
+
+    public final boolean synpred1_ScriptGrammar() {
+        state.backtracking++;
+        int start = input.mark();
+        try {
+            synpred1_ScriptGrammar_fragment(); // can never throw exception
+        } catch (RecognitionException re) {
+            System.err.println("impossible: "+re);
+        }
+        boolean success = !state.failed;
+        input.rewind(start);
+        state.backtracking--;
+        state.failed=false;
+        return success;
+    }
 
 
  
 
-    public static final BitSet FOLLOW_block_in_prog91 = new BitSet(new long[]{0x0000004F801086C2L});
-    public static final BitSet FOLLOW_35_in_block101 = new BitSet(new long[]{0x0000000000000200L});
-    public static final BitSet FOLLOW_NEWLINE_in_block103 = new BitSet(new long[]{0x0000006F801086C0L});
-    public static final BitSet FOLLOW_block_in_block105 = new BitSet(new long[]{0x0000006F801086C0L});
-    public static final BitSet FOLLOW_37_in_block108 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_block_in_prog91 = new BitSet(new long[]{0x0000009F001086C2L});
+    public static final BitSet FOLLOW_36_in_block101 = new BitSet(new long[]{0x0000000000000200L});
+    public static final BitSet FOLLOW_NEWLINE_in_block103 = new BitSet(new long[]{0x000000DF001086C0L});
+    public static final BitSet FOLLOW_block_in_block105 = new BitSet(new long[]{0x000000DF001086C0L});
+    public static final BitSet FOLLOW_38_in_block108 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_stat_in_block126 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_expr_in_stat140 = new BitSet(new long[]{0x0000000000000200L});
     public static final BitSet FOLLOW_NEWLINE_in_stat142 = new BitSet(new long[]{0x0000000000000002L});
@@ -2633,67 +3018,77 @@ public TreeAdaptor getTreeAdaptor() {
     public static final BitSet FOLLOW_forexp_in_stat223 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_NEWLINE_in_stat233 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_ID_in_assign263 = new BitSet(new long[]{0x0000000004000000L});
-    public static final BitSet FOLLOW_26_in_assign265 = new BitSet(new long[]{0x00000040001080C0L});
+    public static final BitSet FOLLOW_26_in_assign265 = new BitSet(new long[]{0x00000080001080C0L});
     public static final BitSet FOLLOW_expr_in_assign267 = new BitSet(new long[]{0x0000000000000200L});
     public static final BitSet FOLLOW_NEWLINE_in_assign269 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_33_in_retexp295 = new BitSet(new long[]{0x00000040001080C0L});
+    public static final BitSet FOLLOW_34_in_retexp295 = new BitSet(new long[]{0x00000080001080C0L});
     public static final BitSet FOLLOW_expr_in_retexp297 = new BitSet(new long[]{0x0000000000000200L});
     public static final BitSet FOLLOW_NEWLINE_in_retexp299 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_multExpr_in_expr325 = new BitSet(new long[]{0x0000001041944002L});
-    public static final BitSet FOLLOW_18_in_expr329 = new BitSet(new long[]{0x00000040001080C0L});
-    public static final BitSet FOLLOW_20_in_expr332 = new BitSet(new long[]{0x00000040001080C0L});
-    public static final BitSet FOLLOW_14_in_expr335 = new BitSet(new long[]{0x00000040001080C0L});
-    public static final BitSet FOLLOW_36_in_expr338 = new BitSet(new long[]{0x00000040001080C0L});
-    public static final BitSet FOLLOW_30_in_expr341 = new BitSet(new long[]{0x00000040001080C0L});
-    public static final BitSet FOLLOW_23_in_expr344 = new BitSet(new long[]{0x00000040001080C0L});
-    public static final BitSet FOLLOW_24_in_expr347 = new BitSet(new long[]{0x00000040001080C0L});
-    public static final BitSet FOLLOW_multExpr_in_expr351 = new BitSet(new long[]{0x0000001041944002L});
+    public static final BitSet FOLLOW_multExpr_in_expr325 = new BitSet(new long[]{0x0000002041944002L});
+    public static final BitSet FOLLOW_18_in_expr329 = new BitSet(new long[]{0x00000080001080C0L});
+    public static final BitSet FOLLOW_20_in_expr332 = new BitSet(new long[]{0x00000080001080C0L});
+    public static final BitSet FOLLOW_14_in_expr335 = new BitSet(new long[]{0x00000080001080C0L});
+    public static final BitSet FOLLOW_37_in_expr338 = new BitSet(new long[]{0x00000080001080C0L});
+    public static final BitSet FOLLOW_30_in_expr341 = new BitSet(new long[]{0x00000080001080C0L});
+    public static final BitSet FOLLOW_23_in_expr344 = new BitSet(new long[]{0x00000080001080C0L});
+    public static final BitSet FOLLOW_24_in_expr347 = new BitSet(new long[]{0x00000080001080C0L});
+    public static final BitSet FOLLOW_multExpr_in_expr351 = new BitSet(new long[]{0x0000002041944002L});
     public static final BitSet FOLLOW_unaryExp_in_multExpr373 = new BitSet(new long[]{0x0000000000222002L});
-    public static final BitSet FOLLOW_17_in_multExpr377 = new BitSet(new long[]{0x00000040001080C0L});
-    public static final BitSet FOLLOW_21_in_multExpr380 = new BitSet(new long[]{0x00000040001080C0L});
-    public static final BitSet FOLLOW_13_in_multExpr383 = new BitSet(new long[]{0x00000040001080C0L});
+    public static final BitSet FOLLOW_17_in_multExpr377 = new BitSet(new long[]{0x00000080001080C0L});
+    public static final BitSet FOLLOW_21_in_multExpr380 = new BitSet(new long[]{0x00000080001080C0L});
+    public static final BitSet FOLLOW_13_in_multExpr383 = new BitSet(new long[]{0x00000080001080C0L});
     public static final BitSet FOLLOW_unaryExp_in_multExpr387 = new BitSet(new long[]{0x0000000000222002L});
     public static final BitSet FOLLOW_20_in_unaryExp413 = new BitSet(new long[]{0x00000000000080C0L});
     public static final BitSet FOLLOW_atom_in_unaryExp415 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_38_in_unaryExp433 = new BitSet(new long[]{0x00000000000080C0L});
+    public static final BitSet FOLLOW_39_in_unaryExp433 = new BitSet(new long[]{0x00000000000080C0L});
     public static final BitSet FOLLOW_atom_in_unaryExp435 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_atom_in_unaryExp453 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_INT_in_atom471 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_ID_in_atom482 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_15_in_atom492 = new BitSet(new long[]{0x00000040001080C0L});
+    public static final BitSet FOLLOW_15_in_atom492 = new BitSet(new long[]{0x00000080001080C0L});
     public static final BitSet FOLLOW_expr_in_atom495 = new BitSet(new long[]{0x0000000000010000L});
     public static final BitSet FOLLOW_16_in_atom497 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_funcall_in_atom508 = new BitSet(new long[]{0x0000000000000002L});
     public static final BitSet FOLLOW_ID_in_funcall520 = new BitSet(new long[]{0x0000000000008000L});
-    public static final BitSet FOLLOW_15_in_funcall522 = new BitSet(new long[]{0x00000040001980C0L});
+    public static final BitSet FOLLOW_15_in_funcall522 = new BitSet(new long[]{0x00000080001980C0L});
     public static final BitSet FOLLOW_expr_in_funcall524 = new BitSet(new long[]{0x0000000000090000L});
-    public static final BitSet FOLLOW_19_in_funcall528 = new BitSet(new long[]{0x00000040001080C0L});
+    public static final BitSet FOLLOW_19_in_funcall528 = new BitSet(new long[]{0x00000080001080C0L});
     public static final BitSet FOLLOW_expr_in_funcall530 = new BitSet(new long[]{0x0000000000090000L});
     public static final BitSet FOLLOW_16_in_funcall534 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_32_in_ifexp558 = new BitSet(new long[]{0x00000000000080C0L});
-    public static final BitSet FOLLOW_15_in_ifexp560 = new BitSet(new long[]{0x00000000000000C0L});
-    public static final BitSet FOLLOW_boolexp_in_ifexp563 = new BitSet(new long[]{0x0000004F801186C0L});
-    public static final BitSet FOLLOW_16_in_ifexp565 = new BitSet(new long[]{0x0000004F801086C0L});
-    public static final BitSet FOLLOW_block_in_ifexp568 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_34_in_whileexp595 = new BitSet(new long[]{0x00000000000080C0L});
-    public static final BitSet FOLLOW_15_in_whileexp597 = new BitSet(new long[]{0x00000000000000C0L});
-    public static final BitSet FOLLOW_boolexp_in_whileexp600 = new BitSet(new long[]{0x0000004F801186C0L});
-    public static final BitSet FOLLOW_16_in_whileexp602 = new BitSet(new long[]{0x0000004F801086C0L});
-    public static final BitSet FOLLOW_block_in_whileexp605 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_boolterm_in_boolexp632 = new BitSet(new long[]{0x000000003A401000L});
-    public static final BitSet FOLLOW_27_in_boolexp635 = new BitSet(new long[]{0x00000000000000C0L});
-    public static final BitSet FOLLOW_12_in_boolexp638 = new BitSet(new long[]{0x00000000000000C0L});
-    public static final BitSet FOLLOW_28_in_boolexp641 = new BitSet(new long[]{0x00000000000000C0L});
-    public static final BitSet FOLLOW_29_in_boolexp644 = new BitSet(new long[]{0x00000000000000C0L});
-    public static final BitSet FOLLOW_22_in_boolexp647 = new BitSet(new long[]{0x00000000000000C0L});
-    public static final BitSet FOLLOW_25_in_boolexp650 = new BitSet(new long[]{0x00000000000000C0L});
-    public static final BitSet FOLLOW_boolterm_in_boolexp654 = new BitSet(new long[]{0x0000000000000002L});
-    public static final BitSet FOLLOW_31_in_forexp686 = new BitSet(new long[]{0x0000000000008040L});
-    public static final BitSet FOLLOW_15_in_forexp688 = new BitSet(new long[]{0x0000000000000040L});
-    public static final BitSet FOLLOW_ID_in_forexp691 = new BitSet(new long[]{0x0000004F801986C0L});
-    public static final BitSet FOLLOW_19_in_forexp694 = new BitSet(new long[]{0x00000000000000C0L});
-    public static final BitSet FOLLOW_forterm_in_forexp696 = new BitSet(new long[]{0x0000004F801986C0L});
-    public static final BitSet FOLLOW_16_in_forexp700 = new BitSet(new long[]{0x0000004F801086C0L});
-    public static final BitSet FOLLOW_block_in_forexp703 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ifelseexp_in_ifexp564 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_33_in_ifexp575 = new BitSet(new long[]{0x00000000000080C0L});
+    public static final BitSet FOLLOW_15_in_ifexp577 = new BitSet(new long[]{0x00000000000000C0L});
+    public static final BitSet FOLLOW_boolexp_in_ifexp580 = new BitSet(new long[]{0x0000009F001186C0L});
+    public static final BitSet FOLLOW_16_in_ifexp582 = new BitSet(new long[]{0x0000009F001086C0L});
+    public static final BitSet FOLLOW_block_in_ifexp585 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_33_in_ifelseexp611 = new BitSet(new long[]{0x00000000000080C0L});
+    public static final BitSet FOLLOW_15_in_ifelseexp613 = new BitSet(new long[]{0x00000000000000C0L});
+    public static final BitSet FOLLOW_boolexp_in_ifelseexp616 = new BitSet(new long[]{0x0000009F001186C0L});
+    public static final BitSet FOLLOW_16_in_ifelseexp618 = new BitSet(new long[]{0x0000009F001086C0L});
+    public static final BitSet FOLLOW_block_in_ifelseexp621 = new BitSet(new long[]{0x0000000080000200L});
+    public static final BitSet FOLLOW_NEWLINE_in_ifelseexp623 = new BitSet(new long[]{0x0000000080000000L});
+    public static final BitSet FOLLOW_31_in_ifelseexp626 = new BitSet(new long[]{0x0000009F001086C0L});
+    public static final BitSet FOLLOW_block_in_ifelseexp628 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_35_in_whileexp656 = new BitSet(new long[]{0x00000000000080C0L});
+    public static final BitSet FOLLOW_15_in_whileexp658 = new BitSet(new long[]{0x00000000000000C0L});
+    public static final BitSet FOLLOW_boolexp_in_whileexp661 = new BitSet(new long[]{0x0000009F001186C0L});
+    public static final BitSet FOLLOW_16_in_whileexp663 = new BitSet(new long[]{0x0000009F001086C0L});
+    public static final BitSet FOLLOW_block_in_whileexp666 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_boolterm_in_boolexp693 = new BitSet(new long[]{0x000000003A401000L});
+    public static final BitSet FOLLOW_27_in_boolexp696 = new BitSet(new long[]{0x00000000000000C0L});
+    public static final BitSet FOLLOW_12_in_boolexp699 = new BitSet(new long[]{0x00000000000000C0L});
+    public static final BitSet FOLLOW_28_in_boolexp702 = new BitSet(new long[]{0x00000000000000C0L});
+    public static final BitSet FOLLOW_29_in_boolexp705 = new BitSet(new long[]{0x00000000000000C0L});
+    public static final BitSet FOLLOW_22_in_boolexp708 = new BitSet(new long[]{0x00000000000000C0L});
+    public static final BitSet FOLLOW_25_in_boolexp711 = new BitSet(new long[]{0x00000000000000C0L});
+    public static final BitSet FOLLOW_boolterm_in_boolexp715 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_32_in_forexp747 = new BitSet(new long[]{0x0000000000008040L});
+    public static final BitSet FOLLOW_15_in_forexp749 = new BitSet(new long[]{0x0000000000000040L});
+    public static final BitSet FOLLOW_ID_in_forexp752 = new BitSet(new long[]{0x0000009F001986C0L});
+    public static final BitSet FOLLOW_19_in_forexp755 = new BitSet(new long[]{0x00000000000000C0L});
+    public static final BitSet FOLLOW_forterm_in_forexp757 = new BitSet(new long[]{0x0000009F001986C0L});
+    public static final BitSet FOLLOW_16_in_forexp761 = new BitSet(new long[]{0x0000009F001086C0L});
+    public static final BitSet FOLLOW_block_in_forexp764 = new BitSet(new long[]{0x0000000000000002L});
+    public static final BitSet FOLLOW_ifelseexp_in_synpred1_ScriptGrammar559 = new BitSet(new long[]{0x0000000000000002L});
 
 }
