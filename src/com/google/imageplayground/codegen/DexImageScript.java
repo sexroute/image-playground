@@ -496,6 +496,46 @@ public class DexImageScript {
         return list.remove(size-1);
     }
     
+    // math functions
+    // trig functions take integer arguments and scale by pi/(Integer.MAX_VALUE+1),
+    // this allows overflow to work correctly; MAX_VALUE scales to pi, MAX_VALUE+1=MIN_VALUE scales to -pi.
+    final static double INT_TO_ANGLE = Math.PI/Integer.MAX_VALUE;
+    final static double ANGLE_TO_INT = Integer.MAX_VALUE/Math.PI;
+    
+    /** Returns Math.atan2(y,x) scaled to an int value.
+     */
+    public int script_atan2(int y, int x) {
+        return (int)(ANGLE_TO_INT * Math.atan2(y, x));
+    }
+    
+    /** Returns Math.sqrt(x*x + y*y) rounded to the nearest int.
+     */
+    public int script_hypot(int x, int y) {
+        return (int)Math.round(Math.sqrt(x*x + y*y));
+    }
+    
+    /** Converts a fraction of a full circle to an integer value usable with the sinmult and cosmult functions.
+     * For example, asangle(1,4) corresponds to tau/4 radians, or 90 degrees. (See http://tauday.com)
+     *  
+     */
+    public int script_asangle(int numerator, int denominator) {
+        return (int)(ANGLE_TO_INT*2*numerator/denominator);
+    }
+    
+    /** Computes the sine of the int-scaled angle multiplied by scale and rounded to the nearest int. 
+     */
+    public int script_sinmult(int angle, int scale) {
+        double theta = INT_TO_ANGLE*angle;
+        return (int)Math.round(Math.sin(theta)*scale);
+    }
+    
+    /** Computes the cosine of the int-scaled angle multiplied by scale and rounded to the nearest int. 
+     */
+    public int script_cosmult(int angle, int scale) {
+        double theta = INT_TO_ANGLE*angle;
+        return (int)Math.round(Math.cos(theta)*scale);
+    }
+    
     // face detection functions
     int computeFaces() {
         numFaces = faceFinder.findFacesInCameraData(this.imageData, this.imageWidth, this.imageHeight);
