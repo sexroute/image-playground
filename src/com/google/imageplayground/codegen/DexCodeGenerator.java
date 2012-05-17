@@ -134,6 +134,7 @@ public class DexCodeGenerator {
     	}
     	// write code now that we have all the locals available
     	for(Instruction inst : context.instructions) {
+    	    //android.util.Log.i("DCG", "Generating instruction: " + inst);
     		inst.generateCode(code, allLocals, context.labels, thisType);
     	}
     }
@@ -441,8 +442,11 @@ public class DexCodeGenerator {
                 // jump to else label if condition is false
                 generateInstructionsForBooleanExpression(tree.getChild(0), elseLabel, context);
                 generateInstructions(tree.getChild(1), context);
-                // jump over else block to end
-                context.instructions.add(new JumpInstruction(endLabel));
+                // jump over else block to end, unless last statement was return
+                // (after a return statement a label must be added before further instructions)
+                if (!(context.instructions.get(context.instructions.size()-1) instanceof ReturnInstruction)) {
+                    context.instructions.add(new JumpInstruction(endLabel));
+                }
                 // code for else block
                 context.instructions.add(new LabelInstruction(elseLabel));
                 generateInstructions(tree.getChild(2), context);
