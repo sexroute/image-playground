@@ -41,7 +41,7 @@ import com.google.imageplayground.parser.ScriptGrammarLexer;
 import com.google.imageplayground.parser.ScriptGrammarParser;
 
 public class DexCodeGenerator {
-    static final boolean DEBUG = true;
+    static final boolean DEBUG = false;
 	
 	static Map<String, BinaryOp> BINARY_OPS = new HashMap<String, BinaryOp>();
 	static Map<String, UnaryOp> UNARY_OPS = new HashMap<String, UnaryOp>();
