@@ -19,7 +19,6 @@ package com.google.imageplayground.codegen;
 import java.util.Arrays;
 
 import org.antlr.runtime.CommonToken;
-import org.antlr.runtime.Token;
 import org.antlr.runtime.tree.CommonTree;
 import org.antlr.runtime.tree.Tree;
 
@@ -38,13 +37,8 @@ public class DexCodeGeneratorTest extends TestCase {
 		}
 	}
 	
-	private static Tree createTree(String content) {
-		Token token = new CommonToken(0, content);
-		return new CommonTree(token);
-	}
-	
-	private static Tree createTreeWithChildren(String parentContent, Object...childContent) {
-		Tree parent = createTree(parentContent);
+	private static Tree createTree(String parentContent, Object...childContent) {
+		Tree parent = new CommonTree(new CommonToken(0, parentContent));
 		for(Object child : childContent) {
 		    if (child instanceof String) {
 		        parent.addChild(createTree((String)child));
@@ -58,18 +52,73 @@ public class DexCodeGeneratorTest extends TestCase {
 	
 	public void testParse() throws Exception {
 		String exp = "x = 1";
-		Tree expectedTree = createTreeWithChildren("=", "x", "1");
+		Tree expectedTree = createTree("=", "x", "1");
 		verifyTreesEqual(DexCodeGenerator.createParseTree(exp), expectedTree);
 	}
 	
 	public void testParse_if() throws Exception {
 	    String exp = "if x>1 y = 2";
-        Tree expectedTree = createTreeWithChildren("if", 
-                createTreeWithChildren(">", "x", "1"),
-                createTreeWithChildren("=", "y", "2"));
+        Tree expectedTree = createTree("if", 
+                createTree(">", "x", "1"),
+                createTree("=", "y", "2"));
 	    verifyTreesEqual(expectedTree, DexCodeGenerator.createParseTree(exp));
 	}
 	
+    public void testParse_ifElse() throws Exception {
+        String exp = "if (x>1) y=2 else z=3";
+        Tree expectedTree = createTree("if", 
+                createTree(">", "x", "1"),
+                createTree("=", "y", "2"),
+                createTree("=", "z", "3"));
+        verifyTreesEqual(expectedTree, DexCodeGenerator.createParseTree(exp));
+    }
+    
+    public void testParse_ifElseLines() throws Exception {
+        String exp = "if (x>1) y=2\nelse z=3";
+        Tree expectedTree = createTree("if", 
+                createTree(">", "x", "1"),
+                createTree("=", "y", "2"),
+                createTree("=", "z", "3"));
+        verifyTreesEqual(expectedTree, DexCodeGenerator.createParseTree(exp));
+    }
+    
+    public void testParse_ifElseBlocks() throws Exception {
+        String exp = "if (x>1) {\n y=2\n}\nelse {\n z=3\n}";
+        Tree expectedTree = createTree("if", 
+                createTree(">", "x", "1"),
+                createTree("BLOCK",
+                        createTree("=", "y", "2")),
+                createTree("BLOCK",
+                        createTree("=", "z", "3")));
+        verifyTreesEqual(expectedTree, DexCodeGenerator.createParseTree(exp));
+    }
+    
+    public void testFor() throws Exception {
+        String exp = "x=0\ny=1\nfor i,1,11 {\n  x = x+i\n  y=y * i\n}";
+        Tree expectedTree = createTree(null, 
+                createTree("=", "x", "0"),
+                createTree("=", "y", "1"),
+                createTree("for", "i", "1", "11", createTree("BLOCK",
+                        createTree("=", "x", createTree("+", "x", "i")),
+                        createTree("=", "y", createTree("*", "y", "i"))
+                        )
+                )
+        );
+        verifyTreesEqual(expectedTree, DexCodeGenerator.createParseTree(exp));
+    }
+    
+    public void testWhile() throws Exception {
+        String exp = "prod = 1\nwhile prod<limit z=2*z";
+        Tree expectedTree = createTree(null,
+                createTree("=", "prod", "1"),
+                createTree("while",
+                        createTree("<", "prod", "limit"),
+                        createTree("=", "z", createTree("*", "2", "z"))
+                )
+        );
+        verifyTreesEqual(expectedTree, DexCodeGenerator.createParseTree(exp));
+    }
+    
 	private void verifyScriptInstructions(String script, DexCodeGenerator.Instruction... expectedInstructions) throws Exception {
 		DexCodeGenerator.InstructionContext context = DexCodeGenerator.createInstructionList(script);
 		assertEquals(Arrays.asList(expectedInstructions), context.instructions);

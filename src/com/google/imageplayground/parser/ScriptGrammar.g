@@ -24,23 +24,28 @@ package com.google.imageplayground.parser;
 prog:   (block)+ ;
 
 block: '{' NEWLINE block* '}' -> ^(BLOCK block*)
-    |  stat
+    |  (stat NEWLINE) -> stat
+    |  NEWLINE ->
     ;
 
-stat:   expr NEWLINE        -> expr
-    |   TYPE assign -> ^(TYPE assign)
+// like block, but without newline. Used by bodies of if/for/while statements
+// because the top-level stat should consume the newline.
+statblock: ('{') => block
+    |      stat
+    ;
+
+stat:   expr
     |   assign
     |   retexp
     |   ifexp
     |   whileexp
     |   forexp
-    |   NEWLINE             ->
     ;
     
-assign: ID '=' expr NEWLINE -> ^('=' ID expr)
+assign: ID '=' expr -> ^('=' ID expr)
     ;
     
-retexp: 'return' expr NEWLINE -> ^('return' expr)
+retexp: 'return' expr -> ^('return' expr)
     ;
     
 expr:   multExpr (('+'^|'-'^|'&'^|'|'^|'>>'^|'<<'^|'<<<'^) multExpr)*
@@ -58,7 +63,7 @@ unaryExp
     
 atom:   INT 
     |   ID
-    |   '('! expr ')'!
+    |   '(' expr ')' -> expr
     |   funcall
     ;
 
@@ -66,13 +71,13 @@ funcall: ID '(' expr? (',' expr)* ')' -> ^(CALL ID expr*)
     ;
 
 ifexp:  (ifelseexp) => ifelseexp
-    |    'if' '('? boolexp ')'? block -> ^('if' boolexp block)
+    |    'if' '('? boolexp ')'? statblock -> ^('if' boolexp statblock)
     ;
     
-ifelseexp: 'if' '('? boolexp ')'? block NEWLINE? 'else' block -> ^('if' boolexp block*)
+ifelseexp: 'if' '('? boolexp ')'? statblock NEWLINE* 'else' statblock -> ^('if' boolexp statblock*)
     ;
     
-whileexp:  'while' '('? boolexp ')'? block -> ^('while' boolexp block)
+whileexp:  'while' '('? boolexp ')'? statblock -> ^('while' boolexp statblock)
     ;
     
 boolexp:  boolterm ('=='^|'!='^|'>'^|'>='^|'<'^|'<='^) boolterm
@@ -81,13 +86,12 @@ boolexp:  boolterm ('=='^|'!='^|'>'^|'>='^|'<'^|'<='^) boolterm
 boolterm: (ID|INT)
     ;
     
-forexp: 'for' '('? ID (',' forterm)* ')'? block -> ^('for' ID forterm* block)
+forexp: 'for' '('? ID (',' forterm)* ')'? statblock -> ^('for' ID forterm* statblock)
     ;
     
 forterm: (ID|INT)
     ;
-
-TYPE: ('int'|'long'|'float'|'double'|'boolean') ;
+    
 ID  :   ('a'..'z'|'A'..'Z')('a'..'z'|'A'..'Z'|'0'..'9')* ;
 INT :   '0'..'9'+ ;
 NEWLINE:'\r'? '\n' ;

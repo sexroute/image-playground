@@ -41,6 +41,7 @@ import com.google.imageplayground.parser.ScriptGrammarLexer;
 import com.google.imageplayground.parser.ScriptGrammarParser;
 
 public class DexCodeGenerator {
+    static final boolean DEBUG = true;
 	
 	static Map<String, BinaryOp> BINARY_OPS = new HashMap<String, BinaryOp>();
 	static Map<String, UnaryOp> UNARY_OPS = new HashMap<String, UnaryOp>();
@@ -113,10 +114,29 @@ public class DexCodeGenerator {
         return (Tree)r.getTree();
     }
     
+    static void getTreeDebugString(Tree tree, String prefix, StringBuilder sb) {
+        String msg = prefix + tree.getText() + "\n";
+        sb.append(msg);
+        android.util.Log.d("DexCodeGenerator.tree", msg);
+        for(int i=0; i<tree.getChildCount(); i++) {
+            getTreeDebugString(tree.getChild(i), prefix+"  ", sb);
+        }
+    }
+    
+    static String treeDebugString(Tree tree) {
+        StringBuilder sb = new StringBuilder();
+        getTreeDebugString(tree, "", sb);
+        return sb.toString();
+    }
+    
     public static InstructionContext createInstructionList(String userScript) throws Exception {
     	InstructionContext context = new InstructionContext();
     	// parse input
     	Tree tree = createParseTree(userScript);
+    	if (DEBUG) {
+    	    String ts = treeDebugString(tree);
+    	    android.util.Log.d("DexCodeGenerator.tree", ts);
+    	}
     	// generate instructions in memory
     	generateInstructions(tree, context);
     	return context;
@@ -134,7 +154,9 @@ public class DexCodeGenerator {
     	}
     	// write code now that we have all the locals available
     	for(Instruction inst : context.instructions) {
-    	    //android.util.Log.i("DCG", "Generating instruction: " + inst);
+    	    if (DEBUG) {
+                android.util.Log.i("DexCodeGenerator", "Generating instruction: " + inst);
+    	    }
     		inst.generateCode(code, allLocals, context.labels, thisType);
     	}
     }
@@ -506,7 +528,9 @@ public class DexCodeGenerator {
             // exit label
             context.instructions.add(new LabelInstruction(exitLabelName));
         }
-    	System.err.println("Unknown token: " + token);
+        else {
+            android.util.Log.w("DexCodeGenerator", "Unknown token: " + token);
+        }
     	return "";
     }
     

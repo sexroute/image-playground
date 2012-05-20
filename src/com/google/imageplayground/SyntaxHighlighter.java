@@ -35,7 +35,7 @@ import android.widget.EditText;
 public class SyntaxHighlighter {
 
     // Could query parser/codegen classes rather than duplicating strings here
-    static Collection<String> KEYWORDS = Arrays.asList("if", "while", "for", "return");
+    static Collection<String> KEYWORDS = Arrays.asList("if", "else", "while", "for", "return");
     static Collection<String> DEFAULT_VARS = Arrays.asList("y", "r", "g", "b", "row", "col", "width", "height");
     
     static Collection<String> scriptMethods = new HashSet<String>();
